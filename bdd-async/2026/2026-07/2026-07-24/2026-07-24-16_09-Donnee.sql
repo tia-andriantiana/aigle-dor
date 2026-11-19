@@ -1,0 +1,21 @@
+-- INSERT INTO HISTORIQUE
+-- (
+--     IDHISTORIQUE,
+--     DATEHISTORIQUE,
+--     HEURE,
+--     OBJET,
+--     ACTION,
+--     IDUTILISATEUR,
+--     REFOBJET
+-- )
+-- SELECT
+--     'HV2' || LPAD(ROW_NUMBER() OVER (ORDER BY ID), 10, '0') AS IDHISTORIQUE,
+--     SYSDATE,
+--     TO_CHAR(SYSDATE, 'HH24:MI:SS'),
+--     'mg.cnaps.compteurmaintenance.CompteurMaintenance',
+--     'Validation',
+--     88069415,
+--     ID
+-- FROM COMPTEURMAINTENANCE
+-- WHERE ETAT = 3;
+ 

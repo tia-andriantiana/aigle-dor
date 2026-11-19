@@ -1,0 +1,3 @@
+INSERT INTO menudynamique (id, libelle, icone, href, rang, niveau, id_pere) VALUES ('MENDYN1784203633766108', 'Configurations', 'settings', '', 5, 4, 'MENDYN1771336006705273');
+INSERT INTO menudynamique (id, libelle, icone, href, rang, niveau, id_pere) VALUES ('MENDYN1784203667135672', 'Lieu d''accident', 'map', 'paie/sanction/configuration/lieuaccident-liste.jsp', 1, 5, 'MENDYN1784203633766108');
+INSERT INTO menudynamique (id, libelle, icone, href, rang, niveau, id_pere) VALUES ('MENDYN1784203724534854', 'Type d''accident', 'view_comfy', 'paie/sanction/configuration/typeaccident-liste.jsp', 2, 5, 'MENDYN1784203633766108');

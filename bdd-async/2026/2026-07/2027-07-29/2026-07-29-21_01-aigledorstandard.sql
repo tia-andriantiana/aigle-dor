@@ -1,0 +1,14 @@
+INSERT INTO menudynamique (id, libelle, icone, href, rang, niveau, id_pere) VALUES ('MENDYN1785348024316148', 'Facture détaillées', 'view_list', 'module.jsp?but=vente/vente-details-liste.jsp', 19, 2, 'MNDN000000001');
+UPDATE menudynamique SET rang = 16 WHERE id = 'MNDN0005050001';
+UPDATE menudynamique SET rang = 17 WHERE id = 'MENDYN1772544841195913';
+UPDATE menudynamique SET rang = 18 WHERE id = 'MENDYNA177883819268969';
+UPDATE menudynamique SET rang = 19 WHERE id = 'MENDYN1785232471471287';
+UPDATE menudynamique SET rang = 14 WHERE id = 'MENDYN1772626689297708';
+UPDATE menudynamique SET rang = 15 WHERE id = 'MNDN000000010';
+UPDATE menudynamique SET rang = 10 WHERE id = 'MNDN0001109001';
+UPDATE menudynamique SET rang = 11 WHERE id = 'MDO0000056';
+UPDATE menudynamique SET rang = 12 WHERE id = 'MENDYN1758529047722337';
+UPDATE menudynamique SET rang = 13 WHERE id = 'ELM01';
+UPDATE menudynamique SET rang = 7 WHERE id = 'MNDN000000012';
+UPDATE menudynamique SET rang = 8 WHERE id = 'MNDN00050500002';
+UPDATE menudynamique SET rang = 9 WHERE id = 'MNDN00050500002L';

@@ -1,0 +1,58 @@
+ALTER TABLE CAISSESESSION
+    ADD IDPOINT VARCHAR2(255);
+
+ALTER TABLE CAISSESESSION
+    ADD CONSTRAINT CAISSESESSION_POINT_FK
+        FOREIGN KEY (IDPOINT)
+            REFERENCES POINT(ID);
+
+ALTER TABLE CAISSESESSION
+DROP COLUMN IDCAISSE;
+
+create table TYPEREPORT
+(
+    ID        VARCHAR2(100) not null
+        constraint TYPEREPORT_PK
+            primary key,
+    VAL       VARCHAR2(100),
+    DESCE     VARCHAR2(100)
+);
+
+INSERT INTO TYPEREPORT (ID, VAL, DESCE)
+VALUES ('TYPREP01', 'Ouverture', 'Ouverture');
+
+INSERT INTO TYPEREPORT (ID, VAL, DESCE)
+VALUES ('TYPREP02', 'Fermeture', 'Fermeture');
+
+
+INSERT INTO TYPEREPORT (ID, VAL, DESCE)
+VALUES ('TYPREP03', 'Report', 'Report');
+
+
+create or replace view REPORTCAISSE_SAISIE as
+SELECT
+    r.ID ,
+    r.IDCAISSE ,
+    c.VAL AS CAISSELIB,
+    CAST(r.MONTANT AS NUMBER(30,5)) AS MONTANT ,
+    CAST(r.MONTANTTHEORIQUE AS NUMBER(30,5)) AS MONTANTTHEORIQUE ,
+    r.DATY ,
+    r.ETAT ,r.heure,
+    CASE
+        WHEN r.ETAT = 0
+            THEN 'ANNULEE'
+        WHEN r.ETAT = 1
+            THEN 'CREE'
+        WHEN r.ETAT = 11
+            THEN 'VALIDEE'
+        END AS ETATLIB,
+    r.idUser,
+    r.TYPEREPORT
+FROM CAISSE c
+         LEFT JOIN REPORTCAISSE r ON c.ID  = r.IDCAISSE;
+
+
+
+INSERT INTO USERHOMEPAGE (ID, CODESERVICE, CODEDIR, IDROLE, URLPAGE)
+VALUES ('USRHP001', null, null, 'caisse', 'caisse/ouveturecaisse/ouverturecaisse-saisie.jsp');
+

@@ -1,0 +1,218 @@
+--ajout MONTANTRESTE , NUMFACT
+
+CREATE OR REPLACE  VIEW AVOIRFCLIB (ID, DESIGNATION, IDMAGASIN, IDMAGASINLIB, DATY, REMARQUE, ETAT, IDORIGINE, IDCLIENT, COMPTE, COMPTEAUXILIAIRE, IDVENTE, IDVENTELIB, IDMOTIF, IDMOTIFLIB, IDCATEGORIE, IDCATEGORIELIB, IDDEVISE, TAUXDECHANGE, MONTANTHT, MONTANTTVA, MONTANTTTC, MONTANTHTAR, MONTANTTVAAR, MONTANTTTCAR, IDRESERVATION, TYPEAVOIR, CLIENTLIB, NUMAVOIR, IDRISTOURNE,MONTANTRESTE,NUMFACT) AS 
+  SELECT a.ID,
+       a.DESIGNATION,
+       a.IDMAGASIN,
+       m.VAL         AS IDMAGASINLIB,
+       a.DATY,
+       a.REMARQUE,
+       a.ETAT,
+       a.IDORIGINE,
+       a.IDCLIENT,
+       t.COMPTE,
+       t.compteauxiliaire,
+       a.IDVENTE,
+       v.DESIGNATION AS IDVENTELIB,
+       a.IDMOTIF,
+       ma.VAL        AS IDMOTIFLIB,
+       a.IDCATEGORIE,
+       c.VAL         AS IDCATEGORIELIB,
+       ag.IDDEVISE,
+       ag.TAUXDECHANGE,
+       ag.MONTANTHT,
+       ag.MONTANTTVA,
+       ag.MONTANTTTC,
+       ag.MONTANTHTAR,
+       ag.MONTANTTVAAR,
+       ag.MONTANTTTCAR,
+       v.IDRESERVATION,
+       ta.val        as Typeavoir,
+       t.NOM         as clientlib,
+       a.numavoir,
+       a.idristourne,
+       v.MONTANTRESTE,
+       v.NUMFACT
+FROM AVOIRFC a
+         LEFT JOIN magasin2 m ON m.id = a.IDMAGASIN
+         LEFT JOIN VENTE_CPL_SANSAVOIR v ON v.id = a.IDVENTE
+         LEFT JOIN MOTIFAVOIRFC ma ON ma.id = a.IDMOTIF
+         LEFT JOIN CATEGORIEAVOIRFC c ON c.id = a.IDCATEGORIE
+         JOIN AVOIRFCFILLE_GRP ag ON ag.idavoirfc = a.id
+         LEFT JOIN TIERS T ON T.ID = A.IDCLIENT
+         left join TYPEAVOIR ta on ta.id = a.IDTYPEAVOIR
+     
+ ;
+ 
+ 
+ 
+-- CREE AVOIRFCLIB_CPL_V2
+ 
+CREATE  VIEW AVOIRFCLIB_CPL_V2 (ID, DESIGNATION, IDMAGASIN, IDMAGASINLIB, DATY, REMARQUE, ETAT, IDORIGINE, IDCLIENT, COMPTE, IDVENTE, IDVENTELIB, IDMOTIF, IDMOTIFLIB, IDCATEGORIE, IDCATEGORIELIB, IDDEVISE, TAUXDECHANGE, MONTANTHT, MONTANTTVA, MONTANTTTC, MONTANTHTAR, MONTANTTVAAR, MONTANTTTCAR, MONTANTPAYE, MONTANTPAYEAR, MONTANT_RESTE_FACTURE, MONTANT_AVOIRS_ANTERIEURS, RESTE_CALCULE, EXCEDENT_AR, RESTEAPAYER, RESTEAPAYERAR, CLIENTLIB, TYPEAVOIR, NUMFACT) AS 
+  SELECT AL.ID,
+       AL.DESIGNATION,
+       AL.IDMAGASIN,
+       AL.IDMAGASINLIB,
+       AL.DATY,
+       AL.REMARQUE,
+       AL.ETAT,
+       AL.IDORIGINE,
+       AL.IDCLIENT,
+       AL.COMPTE,
+       AL.IDVENTE,
+       AL.IDVENTELIB,
+       AL.IDMOTIF,
+       AL.IDMOTIFLIB,
+       AL.IDCATEGORIE,
+       AL.IDCATEGORIELIB,
+       AL.IDDEVISE,
+       AL.TAUXDECHANGE,
+       AL.MONTANTHT,
+       AL.MONTANTTVA,
+       AL.MONTANTTTC,
+       AL.MONTANTHTAR,
+       AL.MONTANTTVAAR,
+       AL.MONTANTTTCAR,
+       nvl(M.montant, 0)                                        AS MONTANTPAYE,
+       NVL(M.montant, 0) * NVL(AL.TAUXDECHANGE, 0)              AS MONTANTPAYEAR,
+
+       NVL(AL.MONTANTRESTE, 0)                                  AS MONTANT_RESTE_FACTURE ,
+
+       0         AS MONTANT_AVOIRS_ANTERIEURS,
+       -- Cas 1 : facture deja soldee -> chaque avoir = credit direct (exedent)
+       CASE
+           WHEN NVL(AL.MONTANTRESTE, 0) = 0 THEN 0
+           ELSE NVL(AL.MONTANTRESTE, 0)  - NVL(AL.MONTANTTTCAR, 0)
+           END                                                  AS RESTE_CALCULE,
+       -- Excedent a rembourser ou a reporter
+       CASE
+           WHEN NVL(AL.MONTANTRESTE, 0) = 0 THEN NVL(AL.MONTANTTTCAR, 0)
+           WHEN NVL(AL.MONTANTRESTE, 0) - NVL(AL.MONTANTTTCAR, 0) < 0
+               THEN ABS(NVL(AL.MONTANTRESTE, 0)  -
+                        NVL(AL.MONTANTTTCAR, 0))
+           ELSE 0
+           END                                                  AS EXCEDENT_AR,
+       (CASE
+            WHEN NVL(AL.MONTANTRESTE, 0) = 0 THEN NVL(AL.MONTANTTTCAR, 0)
+            WHEN NVL(AL.MONTANTRESTE, 0) - NVL(AL.MONTANTTTCAR, 0) <
+                 0
+                THEN ABS(NVL(AL.MONTANTRESTE, 0)  -
+                         NVL(AL.MONTANTTTCAR, 0))
+            ELSE 0
+           END) - NVL(M.montant, 0)                             AS resteapayer,
+       (CASE
+            WHEN NVL(AL.MONTANTRESTE, 0) = 0 THEN NVL(AL.MONTANTTTCAR, 0)
+            WHEN NVL(AL.MONTANTRESTE, 0)  - NVL(AL.MONTANTTTCAR, 0) <
+                 0
+                THEN ABS(NVL(AL.MONTANTRESTE, 0)  -
+                         NVL(AL.MONTANTTTCAR, 0))
+            ELSE 0
+           END) - (NVL(M.montant, 0) * NVL(AL.TAUXDECHANGE, 0)) AS resteapayerar,
+       AL.clientlib,
+       AL.Typeavoir,
+       AL.NUMFACT
+FROM AVOIRFCLIB AL
+         LEFT JOIN MOUVEMENTCAISSEGRPAVOIR_LP M
+                   ON AL.ID = M.IDORIGINE
+
+ ;
+ 
+ ---- CREE AVOIRFCLIB_CPL_V2_VISEE
+ 
+ CREATE  VIEW AVOIRFCLIB_CPL_V2_VISEE (ID, DESIGNATION, IDMAGASIN, IDMAGASINLIB, DATY, REMARQUE, ETAT, IDORIGINE, IDCLIENT, COMPTE, IDVENTE, IDVENTELIB, IDMOTIF, IDMOTIFLIB, IDCATEGORIE, IDCATEGORIELIB, IDDEVISE, TAUXDECHANGE, MONTANTHT, MONTANTTVA, MONTANTTTC, MONTANTHTAR, MONTANTTVAAR, MONTANTTTCAR, MONTANTPAYE, MONTANTPAYEAR, RESTEAPAYER, RESTEAPAYERAR, IMPUTEEFACT, IMPUTEEFACTAR) AS 
+  select ID,
+       DESIGNATION,
+       IDMAGASIN,
+       IDMAGASINLIB,
+       DATY,
+       REMARQUE,
+       ETAT,
+       IDORIGINE,
+       IDCLIENT,
+       COMPTE,
+       IDVENTE,
+       IDVENTELIB,
+       IDMOTIF,
+       IDMOTIFLIB,
+       IDCATEGORIE,
+       IDCATEGORIELIB,
+       IDDEVISE,
+       TAUXDECHANGE,
+       MONTANTHT,
+       MONTANTTVA,
+       MONTANTTTC,
+       MONTANTHTAR,
+       MONTANTTVAAR,
+       MONTANTTTCAR,
+       MONTANTPAYE,
+       MONTANTPAYEAR,
+       RESTEAPAYER,
+       RESTEAPAYERAR,
+       MONTANTTTC - MONTANTPAYE     as imputeefact,
+       MONTANTTTCar - MONTANTPAYEar as imputeefactar
+from AVOIRFCLIB_CPL_V2
+where ETAT >= 11
+ ;
+ 
+-- CREE AVOIRFCLIB_CPL_V2_GRP
+
+CREATE   VIEW AVOIRFCLIB_CPL_V2_GRP (IDVENTE, IDDEVISE, MONTANTHT_AVR, MONTANTTVA_AVR, MONTANTTTC_AVR, MONTANTHTAR_AVR, MONTANTTVAAR_AVR, MONTANTTTCAR_AVR, MONTANTPAYE, MONTANTPAYEAR, RESTEAPAYER_AVR, RESTEAPAYERAR_AVR, IMPUTEEFACT, IMPUTEEFACTAR) AS 
+  SELECT AL.IDVENTE,
+       AL.IDDEVISE,
+       SUM(MONTANTHT)     as MONTANTHT_avr,
+       SUM(MONTANTTVA)    as MONTANTTVA_avr,
+       SUM(MONTANTTTC)    as MONTANTTTC_avr,
+       SUM(MONTANTHTAR)   as MONTANTHTAR_avr,
+       SUM(MONTANTTVAAR)  as MONTANTTVAAR_avr,
+       SUM(MONTANTTTCAR)  as MONTANTTTCAR_avr,
+       SUM(MONTANTPAYE)   as MONTANTPAYE,
+       SUM(MONTANTPAYEAR) as MONTANTPAYEAR,
+       SUM(RESTEAPAYER)   as resteapayer_avr,
+       SUM(RESTEAPAYERAR) as resteapayerar_avr,
+       SUM(imputeefact)   as imputeefact,
+       SUM(imputeefactar) as imputeefactar
+from AVOIRFCLIB_CPL_V2_VISEE AL
+group by IDVENTE, IDDEVISE
+ ;
+
+
+create  OR REPLACE view VENTE_CPL_BC_VISEE as
+SELECT v.ID,
+       v.DESIGNATION,
+       v.IDMAGASIN,
+       m.VAL AS IDMAGASINLIB,
+       v.DATY,
+       v.REMARQUE,
+       v.ETAT,
+       CASE
+           WHEN v.ETAT = 1 THEN 'CREE'
+           WHEN v.ETAT = 11 THEN 'VISEE'
+           WHEN v.ETAT = 0 THEN 'ANNULEE'
+           END
+             AS ETATLIB,
+       v2.MONTANTTOTAL,
+       v2.IDDEVISE,
+       v.IDCLIENT,
+       c.NOM AS CLIENTLIB,
+       cast(V2.MONTANTTVA as number(30,2)) as MONTANTTVA,
+       cast(V2.MONTANTTTC as number(30,2)) as montantttc,
+       cast(V2.MONTANTTTCAR as number(30,2)) as MONTANTTTCAR,
+       cast(nvl(mv.credit,0)-nvl(ACG.MONTANTPAYE, 0) AS NUMBER(30,2)) AS montantpaye,
+       cast(V2.MONTANTTTC-nvl(mv.credit,0)-nvl(ACG.resteapayer_avr, 0) AS NUMBER(30,2)) AS montantreste,
+       nvl(ACG.MONTANTTTC_avr, 0)  as avoir,
+       v2.tauxDeChange AS tauxDeChange,v2.MONTANTREVIENT,cast((V2.MONTANTTTCAR-v2.MONTANTREVIENT) as number(20,2))  as margeBrute,
+       v.IDRESERVATION,
+       v.idorigine as IDORIGINE,
+       cast(nvl(ACG.MONTANTTTC_avr, 0)  as NUMBER(30,2)) as montantAvoir
+FROM VENTE v
+         LEFT JOIN CLIENT c ON c.ID = v.IDCLIENT
+         LEFT JOIN MAGASIN m ON m.ID = v.IDMAGASIN
+         JOIN VENTEMONTANT v2 ON v2.ID = v.ID
+         LEFT JOIN mouvementcaisseGroupeFacture mv ON v.id=mv.IDORIGINE
+         LEFT JOIN AVOIRFCLIB_CPL_V2_GRP ACG on ACG.IDVENTE = v.ID
+         left join AS_BONDELIVRAISON_CLIENT asbl on asbl.ID = v.IDORIGINE
+where v.ETAT = 11
+
+;
+
+ 

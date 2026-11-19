@@ -1,0 +1,9 @@
+UPDATE MENUDYNAMIQUE
+SET LIBELLE='Liste', ICONE='list_alt', HREF='module.jsp?but=maintenance/ressources/machine/machine-liste.jsp', RANG=2, NIVEAU=4, ID_PERE='MENDYN1764608553286867'
+WHERE ID='MENDYN1764608667292943';
+UPDATE MENUDYNAMIQUE
+SET LIBELLE='Saisie', ICONE='list_alt', HREF='module.jsp?but=maintenance/ressources/machine/machine-saisie.jsp', RANG=1, NIVEAU=4, ID_PERE='MENDYN1764608553286867'
+WHERE ID='MENDYN1764608696622367';
+UPDATE MENUDYNAMIQUE
+SET LIBELLE='Ligne ', ICONE='list_alt', HREF='module.jsp?but=ligne/ligne-liste.jsp', RANG=6, NIVEAU=3, ID_PERE='MNDNMT0134256'
+WHERE ID='MENDYNA17645720669432721';

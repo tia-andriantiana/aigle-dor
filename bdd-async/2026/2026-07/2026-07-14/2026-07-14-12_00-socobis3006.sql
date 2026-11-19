@@ -1,0 +1,18 @@
+-- 2026-07-14-12_00-socobis3006
+ 
+DELETE FROM TYPE_AVANCEMENT
+WHERE ID='TYPAV0002';
+ 
+DELETE FROM TYPE_AVANCEMENT
+WHERE ID='TYPAV0003';
+ 
+ALTER TABLE PAIE_AVANCEMENT ADD UNITE VARCHAR2(255);
+ 
+CREATE TABLE LOG_UNITE (
+                                 ID     VARCHAR2(255)  NOT NULL,
+                                 VAL    VARCHAR2(255),
+                                 DESCE  VARCHAR2(255),
+ 
+                                 CONSTRAINT PK_LOG_UNITE PRIMARY KEY (ID)
+);
+ 

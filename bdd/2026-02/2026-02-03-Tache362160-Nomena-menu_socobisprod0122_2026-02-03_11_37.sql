@@ -1,0 +1,1 @@
+INSERT INTO menudynamique (id, libelle, icone, href, rang, niveau, id_pere) VALUES ('MENDYN1770107848599796', 'Liste des prévisions groupées', 'view_list', 'module.jsp?but=prevision/previsiongroupe-liste.jsp', 6, 2, 'MENUDYN002');

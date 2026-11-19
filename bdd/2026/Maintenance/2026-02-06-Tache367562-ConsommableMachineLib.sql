@@ -1,0 +1,13 @@
+CREATE OR REPLACE VIEW CONSOMMABLEMACHINELIB AS
+SELECT
+    c.*,
+    tm.VAL AS idTypeMaintenanceLib,
+    aim.LIBELLE AS idMachineLib,
+    ai.LIBELLE AS idConsommableLib,
+    aim.LIBELLE AS idUniteLib,
+    fr.VAL AS frequenceLib
+FROM CONSOMMABLEMACHINE c
+    LEFT JOIN TYPEMAINTENANCE tm ON tm.ID = c.IDTYPEMAINTENANCE
+    LEFT JOIN UNITEMAINTENANCE fr ON fr.ID = c.frequence
+    LEFT JOIN AS_INGREDIENTS ai ON ai.ID = c.idConsommable
+    LEFT JOIN AS_INGREDIENT_MAINTENANCE aim ON aim.ID = c.IDMACHINE;

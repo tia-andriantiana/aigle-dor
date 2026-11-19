@@ -1,0 +1,36 @@
+
+create or replace view balance_client as
+select
+    vd.IDPRODUIT,
+    ing.LIBELLE,
+    ing.IDFAMILLE,
+    fam.VAL as famille,
+    sum(vd.QTE) as qte,
+    sum(vd.PU*vd.QTE)/sum(vd.QTE) as pu,
+    sum(vd.QTE * vd.PU) as montant,
+    v.IDCLIENT,
+    cl.IDPROVINCE,
+    p.VAL,
+    v.DATY
+from VENTE_DETAILS vd
+    join Vente v on vd.IDVENTE=v.id
+    join AS_INGREDIENTS ing on ing.id=vd.IDPRODUIT
+    join FAMILLEPRODUIT fam on fam.id=ing.IDFAMILLE
+    join Client cl on cl.id=v.IDCLIENT
+    left join Province p on p.id=cl.IDPROVINCE
+group by vd.IDPRODUIT, ing.LIBELLE, ing.IDFAMILLE,fam.VAL, v.IDCLIENT, cl.IDPROVINCE, p.VAL, v.DATY
+;
+
+INSERT INTO FAMILLEPRODUIT (ID, VAL, DESCE) VALUES ('FAM001', 'BISCUITS', 'BISCUITS');
+
+create or replace view StatMere as
+select IDFAMILLE as id, famille, sum(qte) as qte, sum(montant) as montant, DATY, IDCLIENT from balance_client group by IDFAMILLE, famille, daty, IDCLIENT;
+SELECT IDFAMILLE as id, famille, sum(qte) as qte, sum(montant) as montant FROM balance_client evd WHERE evd.daty BETWEEN '18/05/2025' AND '18/05/2026' GROUP BY IDFAMILLE, famille order by famille;
+select * from MENUDYNAMIQUE where LIBELLE like '%Par Client%';
+
+INSERT INTO MENUDYNAMIQUE (ID, LIBELLE, ICONE, HREF, RANG, NIVEAU, ID_PERE) VALUES ('MENDYNBACL001242', 'Balance Client', 'check', 'module.jsp?but=vente/balance-client.jsp', 1, 3, 'MENDYN1778838030848521');
+INSERT INTO AS_INGREDIENTS (ID, LIBELLE, SEUIL, UNITE, QUANTITEPARPACK, PU, ACTIF, PHOTO, CALORIE, DURRE, COMPOSE, CATEGORIEINGREDIENT, IDFOURNISSEUR, DATY, QTELIMITE, PV, LIBELLEVENTE, SEUILMIN, SEUILMAX, PUACHATUSD, PUACHATEURO, PUACHATAUTREDEVISE, PUVENTEUSD, PUVENTEEURO, PUVENTEAUTREDEVISE, ISVENTE, ISACHAT, COMPTE_VENTE, COMPTE_ACHAT, LIBELLEEXTACTE, TVA, FILEPATH, RESTE, TYPESTOCK, REFPOST, REFQUALIFICATION, IDCHAMBRE, ISPERISHABLE, PV2, IDFAMILLE, IDMAGASIN, PARFUMS, ISPETRI, TYPECONSO, COMPTE_TVA, TYPEPRODUIT, COMPTE_STOCK, COMPTE_SORTIE_STOCK, COMPTE_RISTOURNE) VALUES ('ING00V00001CL', '06 Petits lait', 0.00, 'UNT00005', 0.00, 0.00, 1, null, 0.00, null, 1, 'CAT008', null, null, 0.00, 0.00, '6 CL', null, null, null, null, null, null, 0.00, null, null, null, '701000', '601100', null, 20.00, null, 0.00, 'CUMP', 'EX000041', 'QUAL0032', null, null, null, null, 'PHARM005', null, 0, null, '445610', 'TP001', '311000', '603110', null);
+INSERT INTO AS_INGREDIENTS (ID, LIBELLE, SEUIL, UNITE, QUANTITEPARPACK, PU, ACTIF, PHOTO, CALORIE, DURRE, COMPOSE, CATEGORIEINGREDIENT, IDFOURNISSEUR, DATY, QTELIMITE, PV, LIBELLEVENTE, SEUILMIN, SEUILMAX, PUACHATUSD, PUACHATEURO, PUACHATAUTREDEVISE, PUVENTEUSD, PUVENTEEURO, PUVENTEAUTREDEVISE, ISVENTE, ISACHAT, COMPTE_VENTE, COMPTE_ACHAT, LIBELLEEXTACTE, TVA, FILEPATH, RESTE, TYPESTOCK, REFPOST, REFQUALIFICATION, IDCHAMBRE, ISPERISHABLE, PV2, IDFAMILLE, IDMAGASIN, PARFUMS, ISPETRI, TYPECONSO, COMPTE_TVA, TYPEPRODUIT, COMPTE_STOCK, COMPTE_SORTIE_STOCK, COMPTE_RISTOURNE) VALUES ('ING00V00003CL', '18 Petits lait', 0.00, 'UNT00005', 0.00, 0.00, 1, null, 0.00, null, 1, 'CAT008', null, null, 0.00, 0.00, '18 CL', null, null, null, null, null, null, 0.00, null, null, null, '701000', '601100', null, 20.00, null, 0.00, 'CUMP', 'EX000041', 'QUAL0032', null, null, null, null, 'PHARM005', null, 0, null, '445610', 'TP001', '311000', '603110', null);
+
+create or replace view StatFille as
+select IDPRODUIT as id, LIBELLE, sum(qte) as qte, sum(montant) as montant, DATY, IDCLIENT, IDPROVINCE, famille from balance_client group by IDPRODUIT, LIBELLE, daty, IDCLIENT, IDPROVINCE, famille;

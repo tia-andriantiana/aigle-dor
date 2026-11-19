@@ -1,0 +1,1 @@
+INSERT INTO menudynamique (id, libelle, icone, href, rang, niveau, id_pere) VALUES ('MENDYN1781507344256825', 'RelevÃ© electricitÃ©', 'find_replace', 'module.jsp?but=compteur/releve-electricite-liste.jsp', 4, 3, 'MNDCMPT012505');

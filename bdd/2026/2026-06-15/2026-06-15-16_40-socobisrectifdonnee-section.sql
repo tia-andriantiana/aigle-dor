@@ -1,0 +1,8 @@
+CREATE OR REPLACE VIEW SECTION_LIB AS
+SELECT
+    s.*,
+    ser.LIBELLE AS libelle,
+    ser.COMPTE  AS compte
+FROM SECTION s
+LEFT JOIN SERVICE ser
+    ON s.IDSERVICE = ser.ID;

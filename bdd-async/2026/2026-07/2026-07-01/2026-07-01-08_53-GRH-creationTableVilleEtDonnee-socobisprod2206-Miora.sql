@@ -1,0 +1,73 @@
+CREATE TABLE VILLE (
+    id VARCHAR(50) PRIMARY KEY,
+    val VARCHAR(100) NOT NULL,
+    desce VARCHAR(255)
+);
+
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000001', 'Antananarivo', 'Capitale, région Analamanga, 1 274 225 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000002', 'Toamasina', 'Région Atsinanana, 325 857 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000003', 'Antsirabe', 'Région Vakinankaratra, 246 354 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000004', 'Mahajanga', 'Région Boeny, 246 022 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000005', 'Fianarantsoa', 'Région Haute Matsiatra, 191 776 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000006', 'Toliara', 'Région Atsimo-Andrefana, 168 756 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000007', 'Antsiranana', 'Région Diana, 129 320 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000008', 'Nosy Be', 'Région Diana, 108 266 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000009', 'Sambava', 'Région Sava, 84 039 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000010', 'Imerintsiatosika', 'Région Itasy, 69 953 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000011', 'Antalaha', 'Région Sava, 67 888 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000012', 'Taolanaro', 'Région Anôsy, 67 284 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000013', 'Ambovombe', 'Région Androy, 65 402 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000014', 'Ambilobe', 'Région Diana, 62 346 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000015', 'Ambanja', 'Région Diana, 60 321 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000016', 'Moramanga', 'Région Alaotra-Mangoro, 57 084 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000017', 'Morondava', 'Région Menabe, 53 510 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000018', 'Ambatondrazaka', 'Région Alaotra-Mangoro, 47 649 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000019', 'Amboasary', 'Région Anôsy, 45 989 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000020', 'Tsiroanomandidy', 'Région Bongolava, 44 461 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000021', 'Manakara', 'Région Fitovinany, 44 237 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000022', 'Ambalavao', 'Région Haute Matsiatra, 43 231 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000023', 'Maroantsetra', 'Région Ambatosoa, 42 529 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000024', 'Fenoarivo Atsinanana', 'Région Analanjirofo, 41 734 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000025', 'Ambositra', 'Région Amoron''i Mania, 41 078 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000026', 'Soavinandriana', 'Région Itasy, 40 045 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000027', 'Ihosy', 'Région Ihorombe, 39 556 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000028', 'Marovoay', 'Région Boeny, 39 290 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000029', 'Vangaindrano', 'Région Atsimo-Atsinanana, 38 537 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000030', 'Antsohihy', 'Région Sofia, 38 253 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000031', 'Ampanihy', 'Région Atsimo-Andrefana, 38 000 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000032', 'Mahanoro', 'Région Atsinanana, 37 800 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000033', 'Ambatofinandrahana', 'Région Amoron''i Mania, 37 409 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000034', 'Andilamena', 'Région Alaotra-Mangoro, 37 229 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000035', 'Ikongo', 'Région Fitovinany, 36 684 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000036', 'Vavatenina', 'Région Analanjirofo, 35 750 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000037', 'Mananara Avaratra', 'Région Ambatosoa, 35 148 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000038', 'Farafangana', 'Région Atsimo-Atsinanana, 34 676 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000039', 'Andapa', 'Région Sava, 34 616 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000040', 'Betafo', 'Région Vakinankaratra, 34 336 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000041', 'Ambatoboeny', 'Région Boeny, 33 456 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000042', 'Amparafaravola', 'Région Alaotra-Mangoro, 33 299 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000043', 'Ambatolampy', 'Région Vakinankaratra, 32 291 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000044', 'Mandritsara', 'Région Sofia, 31 135 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000045', 'Bealanana', 'Région Sofia, 30 937 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000046', 'Fandriana', 'Région Amoron''i Mania, 29 232 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000047', 'Mampikony', 'Région Sofia, 28 593 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000048', 'Arivonimamo', 'Région Itasy, 28 324 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000049', 'Vohibinany', 'Région Atsinanana, 27 865 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000050', 'Ankazobe', 'Région Analamanga, 26 845 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000051', 'Sainte-Marie', 'Région Analanjirofo, 26 822 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000052', 'Maevatanana', 'Région Betsiboka, 25 928 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000053', 'Betioky', 'Région Atsimo-Andrefana, 25 612 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000054', 'Mananjary', 'Région Vatovavy, 25 222 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000055', 'Tsaratanana', 'Région Betsiboka, 24 971 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000056', 'Anjozorobe', 'Région Analamanga, 24 117 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000057', 'Ambohidratrimo', 'Région Analamanga, 23 760 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000058', 'Morombe', 'Région Atsimo-Andrefana, 22 625 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000059', 'Boriziny', 'Région Sofia, 22 573 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000060', 'Maintirano', 'Région Melaky, 22 293 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000061', 'Manjakandriana', 'Région Analamanga, 22 188 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000062', 'Vohemar', 'Région Sava, 22 047 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000063', 'Morafeno Bekily', 'Région Androy, 20 915 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000064', 'Manja', 'Région Menabe, 20 556 hab. (2018)');
+INSERT INTO VILLE (id, val, desce) VALUES ('VL000065', 'Miandrivazo', 'Région Menabe, 20 421 hab. (2018)');
+
+UPDATE ville SET desce = val ;

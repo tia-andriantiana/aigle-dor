@@ -1,0 +1,10 @@
+UPDATE MENUDYNAMIQUE t
+SET t.LIBELLE = 'Ajout recette sans facture'
+WHERE t.ID = 'MENUDYN0020001';
+
+UPDATE MENUDYNAMIQUE t
+SET t.LIBELLE = 'Ajout dépense sans facture'
+WHERE t.ID = 'MENUDYN0020010';
+
+
+

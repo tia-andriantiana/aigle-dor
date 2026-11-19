@@ -1,0 +1,1 @@
+INSERT INTO menudynamique (id, libelle, icone, href, rang, niveau, id_pere) VALUES ('MENDYN1785232471471287', 'Tarif par client', 'attach_money', 'module.jsp?but=vente/tarifIngredients/tarifIngredients-liste.jsp', 23, 2, 'MNDN000000001');

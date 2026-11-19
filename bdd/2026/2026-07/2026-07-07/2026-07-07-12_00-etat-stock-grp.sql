@@ -1,0 +1,4 @@
+create view STOCK_ENGAGE_FILLE_GP_MAG as
+select IDMAGASIN,IDPRODUIT, sum(SORTIE) as sortie
+from STOCK_ENGAGE_FILLE stf join STOCK_ENGAGE st on st.id=stf.IDMVTSTOCK
+group by IDPRODUIT,IDMAGASIN;

@@ -1,0 +1,1 @@
+UPDATE entite SET val = 'Composant' , desce = 'Composant' WHERE id = 'ENT000004';

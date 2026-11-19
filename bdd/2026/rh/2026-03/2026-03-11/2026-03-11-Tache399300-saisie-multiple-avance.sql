@@ -1,0 +1,2 @@
+INSERT INTO menudynamique (id, libelle, icone, href, rang, niveau, id_pere) VALUES ('MENDYN1773227713298979', 'Saisie Mutliple', 'add_card', 'module.jsp?but=paie/avance/avancesaisie-multiple.jsp&idAvance=PRU0453', 5, 4, 'MD00021110333');
+UPDATE menudynamique SET href = 'module.jsp?but=paie/avance/avancesaisie-multiple.jsp&idAvance=PRU044' WHERE id = 'MD00021110071';

@@ -1,0 +1,21 @@
+CREATE OR REPLACE VIEW FACTUREFOURNISSEUR_FL_COMPTE (COMPTE,IDFACTUREFOURNISSEUR,MONTANTHT,IDDEVISE,TAUXDECHANGE) AS SELECT 
+ff.compte,
+ff.idfacturefournisseur,
+cast(sum(ff.pu * ff.QTE) as number(30, 2))                            as montantht,
+ff.iddevise,
+ff.tauxdechange
+FROM FACTUREFOURNISSEUR_FILLECPL ff
+GROUP BY compte, IDFACTUREFOURNISSEUR, iddevise, tauxdechange;
+
+CREATE OR REPLACE VIEW FACTUREFOURNISSEUR_FL_TVA (COMPTE,IDFACTUREFOURNISSEUR,MONTANTHT,IDDEVISE,TAUXDECHANGE) AS SELECT 
+ai.compte_tva AS compte,
+ff.idfacturefournisseur,
+cast(sum(ff.pu * ff.QTE * (ff.tva / 100)) as number(30, 2))              as montanttva,
+ff.iddevise,
+ff.tauxdechange
+FROM FACTUREFOURNISSEUR_FILLECPL ff
+LEFT JOIN AS_INGREDIENTS ai ON ai.id = ff.idproduit
+GROUP BY ai.compte_tva, IDFACTUREFOURNISSEUR, iddevise, tauxdechange;
+
+CREATE OR REPLACE view FACTUREFOURNISSEUR_FL_ERITURE AS
+SELECT * FROM FACTUREFOURNISSEUR_FL_COMPTE UNION SELECT * FROM FACTUREFOURNISSEUR_FL_TVA;

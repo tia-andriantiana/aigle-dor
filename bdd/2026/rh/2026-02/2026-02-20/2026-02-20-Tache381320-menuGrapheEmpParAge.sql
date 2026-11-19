@@ -1,0 +1,1 @@
+INSERT INTO menudynamique (id, libelle, icone, href, rang, niveau, id_pere) VALUES ('MENDYN1771395863085541', 'Tranche d''âge personnel', 'bar_chart', 'module.jsp?but=paie/employe/analyse/tranche-age.jsp', 3, 4, 'MENDYN1768479181422720');

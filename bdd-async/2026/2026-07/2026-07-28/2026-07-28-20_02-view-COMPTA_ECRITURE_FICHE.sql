@@ -1,0 +1,32 @@
+efa executer prod
+
+-- create or replace view COMPTA_ECRITURE_FICHE as
+-- select ce."ID",
+--        ce."DATY",
+--        ce."DATECOMPTABLE",
+--        ce."EXERCICE",
+--        ce."DESIGNATION",
+--        ce."REMARQUE",
+--        ce."ETAT",
+--        ce."HORSEXERCICE",
+--        ce."JOURNAL",
+--        ce."OD",
+--        ce."ORIGINE",
+--        ce."CREDIT",
+--        ce."DEBIT",
+--        ce."IDUSER",
+--        ce."PERIODE",
+--        ce."TRIMESTRE",
+--        ce."ANNEE",
+--        ce."IDOBJET",
+--        ce."LETTRAGE",
+--        vc.FICHE  as lien,
+--        ce.dateSaisie,
+--        ce.DATEMODIF,
+--        ce.idModificateur,
+--        u.NOMUSER as idModificateurlib,
+--        cj.VAL as journalLib
+-- from COMPTA_ECRITURE ce
+--          left join V_CLASSEETFICHE vc on substr(ce.IDOBJET, 1, 3) = vc.LIBELLE
+--          left join utilisateur u on ce.idmodificateur = u.REFUSER
+--         left join COMPTA_JOURNAL cj on cj.id=ce.JOURNAL

@@ -1,0 +1,2 @@
+-- delete * from mo travaux first
+ALTER TABLE MOTRAVAUX MODIFY DUREEESTIMATIF VARCHAR2(50);

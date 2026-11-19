@@ -1,0 +1,1 @@
+alter table OFFILLE add prixVente number(30,2);

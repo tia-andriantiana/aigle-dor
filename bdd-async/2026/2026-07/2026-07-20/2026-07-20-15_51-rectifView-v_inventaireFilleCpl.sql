@@ -1,0 +1,39 @@
+CREATE OR REPLACE VIEW v_inventaireFilleCpl (
+    ID,
+    IDINVENTAIRE,
+    IDPRODUIT,
+    IDPRODUITLIB,
+    EXPLICATION,
+    QUANTITETHEORIQUE,
+    QUANTITE,
+    LIBELLEEXTACTE,
+    PU,
+    ECART,
+    DATEINV,
+    MONTANTTHEORIQUE,
+    MONTANTREELLE,
+    ECARTMONTANT,
+    CATEGORIEINGREDIENT
+) AS
+SELECT
+    i.ID,
+    i.IDINVENTAIRE,
+    i.IDPRODUIT,
+    p.libelle AS IDPRODUITLIB,
+    i.EXPLICATION,
+    i.QUANTITETHEORIQUE,
+    i.QUANTITE,
+    p.LIBELLEEXTACTE,
+    i.pu,
+    (i.QUANTITE - i.QUANTITETHEORIQUE) AS ecart,
+    iv.daty AS DATEINV,
+    NVL(i.pu, 0) * NVL(i.QUANTITETHEORIQUE, 0) AS MONTANTTHEORIQUE,
+    NVL(i.pu, 0) * NVL(i.QUANTITE, 0) AS MONTANTREELLE,
+    (NVL(i.pu, 0) * NVL(i.QUANTITE, 0)) - (NVL(i.pu, 0) * NVL(i.QUANTITETHEORIQUE, 0)) AS ECARTMONTANT,
+    P.categorieIngredient 
+FROM
+    inventaireFille i
+    LEFT JOIN inventaire iv ON iv.id = i.IDINVENTAIRE
+    LEFT JOIN as_ingredients p ON p.id = i.IDPRODUIT
+WHERE
+    iv.etat >= 11;

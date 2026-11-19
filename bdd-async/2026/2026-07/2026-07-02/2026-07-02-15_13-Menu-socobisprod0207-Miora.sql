@@ -1,0 +1,1 @@
+UPDATE MENUDYNAMIQUE m SET href = 'module.jsp?but=stock/etatstock/etatstock-liste-pu-fournisseur.jsp' WHERE id = 'MNDN7100000031';

@@ -1,0 +1,2 @@
+INSERT INTO MENUDYNAMIQUE (ID, LIBELLE, ICONE, HREF, RANG, NIVEAU, ID_PERE) VALUES ('MENUDYN0020010', 'Saisie de dépenses prévisionnelles', 'add', 'module.jsp?but=prevision/previsionDepense-saisie.jsp', 1, 2, 'MENUDYN002');
+UPDATE MENUDYNAMIQUE SET LIBELLE = 'Saisie de recettes prévisionnelles', ICONE = 'add', HREF = 'module.jsp?but=prevision/previsionRecette-saisie.jsp', RANG = 1, NIVEAU = 2, ID_PERE = 'MENUDYN002' WHERE ID = 'MENUDYN0020001';

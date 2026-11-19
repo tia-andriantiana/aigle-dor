@@ -1,0 +1,4 @@
+INSERT INTO MENUDYNAMIQUE
+(ID, LIBELLE, ICONE, HREF, RANG, NIVEAU, ID_PERE)
+VALUES('MENDYNA177883819268969', 'Remise', 'list_alt',
+'module.jsp?but=vente/remise/remise-liste.jsp', 23, 2, 'MNDN000000001');

@@ -1,0 +1,3 @@
+--Stefan
+
+ALTER TABLE AVANCE ADD idCategorie VARCHAR2(255);

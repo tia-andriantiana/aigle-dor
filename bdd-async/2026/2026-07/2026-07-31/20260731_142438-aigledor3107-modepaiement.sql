@@ -1,0 +1,1 @@
+INSERT INTO MODEPAIEMENT (ID, VAL, DESCE) VALUES ('0006', 'Mobile Money', 'Mobile Money');

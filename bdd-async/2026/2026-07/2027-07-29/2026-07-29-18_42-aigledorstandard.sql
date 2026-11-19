@@ -1,0 +1,30 @@
+CREATE OR REPLACE VIEW V_PANIERMOYEN AS
+SELECT
+    ID,
+    DATY,
+    IDPOINTLIB,
+    IDPROVINCELIB,
+    COUNT(*) AS QTE,
+    SUM(MONTANTTOTAL_VENTE) AS MONTANTTOTAL,
+    SUM(MONTANTTOTAL_VENTE) / COUNT(*) AS PUTOTAL
+FROM (
+         SELECT
+             ID,
+             IDVENTE,
+             DATY,
+             IDPOINTLIB,
+             IDPROVINCELIB,
+             MAX(MONTANTTOTAL) AS MONTANTTOTAL_VENTE
+         FROM VENTE_DETAILS_CPL_2_VISEE
+         GROUP BY
+             ID,
+             IDVENTE,
+             DATY,
+             IDPOINTLIB,
+             IDPROVINCELIB
+     )
+GROUP BY
+    ID,
+    DATY,
+    IDPOINTLIB,
+    IDPROVINCELIB;

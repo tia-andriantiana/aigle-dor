@@ -1,0 +1,2 @@
+INSERT INTO menudynamique (id, libelle, icone, href, rang, niveau, id_pere) VALUES ('MENDYN1786086368970377', 'Analyse des ventes par pointure/Taille', 'analytics', 'module.jsp?but=vente/vente-analyse.jsp&grouper=idPointureLib', 14, 3, 'MNDN000000010');
+INSERT INTO menudynamique (id, libelle, icone, href, rang, niveau, id_pere) VALUES ('MENDYN1786086488102392', 'Analyse des ventes par couleur', 'analytics', 'module.jsp?but=vente/vente-analyse.jsp&grouper=idCouleurLib', 15, 3, 'MNDN000000010');

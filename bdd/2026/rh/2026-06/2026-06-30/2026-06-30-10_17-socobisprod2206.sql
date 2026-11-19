@@ -1,0 +1,28 @@
+create or replace view PAIE_PERS_ELTPAIE_LIB_IND as
+SELECT ID,
+       MATRICULE,
+       CODE_RUBRIQUE,
+       DATE_DEBUT,
+       DATE_FIN,
+       GAIN,
+       RETENUE,
+       REMARQUE,
+       IDPERSONNEL,
+       ETAT,
+       ETATLIB,
+       ID_OBJET,
+       IDUSER,
+       MOISREGULARISATION,
+       ANNEEREGULARISATION,
+       IDCATEGORIE_QUALIFICATION,
+       IDFONCTION,
+       POURCENTAGE,
+       -- Libellé du mois
+       TO_CHAR(TO_DATE(pp.MOISREGULARISATION, 'MM'), 'MONTH', 'NLS_DATE_LANGUAGE=FRENCH')
+           AS MOISREGULARISATIONLIB
+FROM PAIE_PERS_ELTPAIE_LIB2 pp
+WHERE pp.id_code_rubrique = 'PR000021'
+
+
+    /
+

@@ -1,0 +1,34 @@
+CREATE OR REPLACE  VIEW AS_INGREDIENT_MACHINE AS(
+  SELECT
+	  asm.ID,
+	  asm.IDINGREDIENT,
+	  asm.IDENTITE,
+	  asm.REFERENCEOBJET,
+	  asm.MARQUEOBJET,
+	  asm.MODELEOBJET,
+	  asm.NUMEROSERIEOBJET,
+	  asm.DESCRIPTIONOBJET,
+	  asm.QUALITEOBJET,
+	  asm.ETATOBJET,
+	  asm.LOCALISATIONOBJET,
+	  asm.PUISSANCEOBJET,
+	  asm.OBSERVATIONOBJET,
+	  asm.TYPERATTACHEMENT,
+	  asm.ESTENGIN,
+	  asm.LIBELLE,
+	  asm.DATEAQUISITION,
+	  asm.INGREDIENTLIB,
+	  asm.IDENTITELIB,
+	  asm.QUALITEOBJETLIB,
+	  asm.ETATOBJETLIB,
+	  asm.LOCALISATIONOBJETLIB,
+	  asm.ESTENGINLIB,
+	  asm.IDLIGNE,
+	  asm.IDLIGNELIB,
+	  asm.PU,
+	  im.id AS idinspection
+  FROM
+  	As_ingredient_maintenance_lib asm
+  	LEFT JOIN inspectionmere im ON im.idElement=asm.id
+  WHERE
+  	IDENTITE = 'ENT000001');

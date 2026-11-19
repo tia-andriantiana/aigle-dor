@@ -1,0 +1,29 @@
+INSERT INTO menudynamique (id, libelle, icone, href, rang, niveau, id_pere) VALUES ('MENDYN1785336102992192', 'Panier moyen', 'bar_chart', 'module.jsp?but=vente/analyse/panierMoyen.jsp', 13, 3, 'MNDN000000010');
+
+
+CREATE OR REPLACE VIEW V_PANIERMOYEN AS
+SELECT
+    DATY,
+    IDPOINTLIB,
+    IDPROVINCELIB,
+    COUNT(*) AS QTE,
+    SUM(MONTANTTOTAL_VENTE) AS MONTANTTOTAL,
+    SUM(MONTANTTOTAL_VENTE) / COUNT(*) AS PUTOTAL
+FROM (
+    SELECT
+        IDVENTE,
+        DATY,
+        IDPOINTLIB,
+        IDPROVINCELIB,
+        MAX(MONTANTTOTAL) AS MONTANTTOTAL_VENTE
+    FROM VENTE_DETAILS_CPL_2_VISEE
+    GROUP BY
+        IDVENTE,
+        DATY,
+        IDPOINTLIB,
+        IDPROVINCELIB
+)
+GROUP BY
+    DATY,
+    IDPOINTLIB,
+    IDPROVINCELIB;

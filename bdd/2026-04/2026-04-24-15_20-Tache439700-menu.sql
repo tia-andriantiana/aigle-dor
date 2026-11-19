@@ -1,0 +1,1 @@
+UPDATE MENUDYNAMIQUE SET LIBELLE = 'Liste', ICONE = 'list_alt', HREF = 'module.jsp?but=utilisateur/utilisateur-liste.jsp', RANG = 2, NIVEAU = 2, ID_PERE = 'MENUDYN123042426761U' WHERE ID = 'MENUDYN123042426763';

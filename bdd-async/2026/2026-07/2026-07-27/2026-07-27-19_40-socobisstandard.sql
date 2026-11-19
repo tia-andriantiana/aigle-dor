@@ -1,0 +1,108 @@
+-- 2026-07-27-19_40-socobisstandard
+
+ALTER TABLE AS_INGREDIENTS
+DROP (
+    GENERATION,
+    VITESSE,
+    CAPACITE,
+    INFO1,
+    INFO2,
+    GARANTI,
+    ESTOCCASION,
+    UNITECAPACITE,
+    UNITEVITESSE,
+    ESTUTM,
+    DLC,
+    ESTUSINE,
+    ESTVENDUPDV
+);
+
+CREATE OR REPLACE VIEW ST_INGREDIENTSVENTEPOS AS
+SELECT
+    ai.ID,
+    ai.LIBELLE as libelle,
+    ai.SEUIL,
+    ai.UNITE,
+    ai.QUANTITEPARPACK,
+    ai.PU,
+    ai.ACTIF,
+    ai.PHOTO,
+    ai.CALORIE,
+    ai.DURRE,
+    ai.COMPOSE,
+    ai.CATEGORIEINGREDIENT,
+    ai.IDFOURNISSEUR,
+    ai.DATY,
+    ai.QTELIMITE,
+    ai.PV,
+    ai.LIBELLEVENTE,
+    ai.SEUILMIN,
+    ai.SEUILMAX,
+    ai.PUACHATUSD,
+    ai.PUACHATEURO,
+    ai.PUACHATAUTREDEVISE,
+    ai.PUVENTEUSD,
+    ai.PUVENTEEURO,
+    ai.PUVENTEAUTREDEVISE,
+    ai.ISVENTE,
+    ai.ISACHAT,
+    ai.COMPTE_VENTE,
+    ai.COMPTE_ACHAT,
+    ai.TVA,
+    1 AS taux,
+    ai.COMPTE_VENTE AS compte,
+    ai.LIBELLE || ' ' || ai.COULEUR || ' ' || ai.TAILLE AS libellecomposant,
+    ai.COULEUR,
+    ai.TAILLE,
+    ai.codebarre,
+    ai.REFERENCE,
+    ai.codegros,
+    ai.pvgros,
+    u.VAL AS UNITELIB,
+    CONCAT(concat(ai.libelle,' - '),u.val) AS designation
+FROM
+    AS_INGREDIENTS ai
+        LEFT JOIN AS_RECETTE ar ON ar.IDPRODUITS = ai.ID
+        LEFT JOIN AS_INGREDIENTS cps ON cps.ID  = ar.IDINGREDIENTS
+        LEFT JOIN AS_UNITE u ON ai.unite=u.id
+where AI.PV != 0 AND ai.ACTIF = 1
+GROUP BY
+    ai.ID,
+    ai.LIBELLE,
+    ai.SEUIL,
+    ai.UNITE,
+    ai.QUANTITEPARPACK,
+    ai.PU,
+    ai.ACTIF,
+    ai.PHOTO,
+    ai.CALORIE,
+    ai.DURRE,
+    ai.COMPOSE,
+    ai.CATEGORIEINGREDIENT,
+    ai.IDFOURNISSEUR,
+    ai.DATY,
+    ai.QTELIMITE,
+    ai.PV,
+    ai.LIBELLEVENTE,
+    ai.SEUILMIN,
+    ai.SEUILMAX,
+    ai.PUACHATUSD,
+    ai.PUACHATEURO,
+    ai.PUACHATAUTREDEVISE,
+    ai.PUVENTEUSD,
+    ai.PUVENTEEURO,
+    ai.PUVENTEAUTREDEVISE,
+    ai.ISVENTE,
+    ai.ISACHAT,
+    ai.COMPTE_VENTE,
+    ai.COMPTE_ACHAT,
+    ai.TVA,
+    ai.COULEUR,
+    ai.TAILLE,
+    ai.REFERENCE,
+    ai.codebarre,
+    u.val,
+    ai.codegros,
+    ai.pvgros
+
+;

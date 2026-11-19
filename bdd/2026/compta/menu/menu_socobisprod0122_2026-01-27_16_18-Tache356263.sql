@@ -1,0 +1,1 @@
+INSERT INTO menudynamique (id, libelle, icone, href, rang, niveau, id_pere) VALUES ('MENDYN176951991615864', 'Facture Standard', 'description', '/socobis/pages/module.jsp?but=compta/depense/facture-depense-liste.jsp', 9, 2, 'MNDN274');

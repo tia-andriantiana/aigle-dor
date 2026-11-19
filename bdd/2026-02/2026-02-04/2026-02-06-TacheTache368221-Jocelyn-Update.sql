@@ -1,0 +1,4 @@
+
+UPDATE TYPEMAINTENANCE
+SET VAL='Préventive', DESCE='Préventive'
+WHERE ID='TM000001';

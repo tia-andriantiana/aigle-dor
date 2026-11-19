@@ -1,0 +1,511 @@
+efa executer prod
+-- create or replace view MVTSTOCKFILLELIB as
+-- SELECT
+--    m.ID ,
+--    m.IDMVTSTOCK ,
+--    m.IDPRODUIT ,
+--    p.libelle  AS IDPRODUITLIB,
+--    m.ENTREE ,
+--    m.SORTIE ,
+--    m.IDVENTEDETAIL ,
+--    '' AS IDVENTEDETAILLIB,
+--    m.IDTRANSFERTDETAIL ,
+--    '' AS IDTRANSFERTDETAILLIB,
+--    m2.DATY ,
+--    m2.IDMAGASIN ,
+--    m3.VAL AS IDMAGASINLIB,
+--    m.pu,
+--    cast(m.pu*m.ENTREE+(m.pu*m.sortie) as number(20,5)) as montant,
+--    p.LIBELLE,
+--    m.MVTSRC,
+--    p.libelle AS libelleexacte,
+--    m2.DATY AS dateSql,
+--    m2.idobjet
+-- FROM MVTSTOCKFILLE m
+--         LEFT JOIN AS_INGREDIENTS  p ON p.ID = m.IDPRODUIT
+--         LEFT JOIN MVTSTOCK m2 ON m2.ID = m.IDMVTSTOCK
+--         LEFT JOIN MAGASIN2 m3 ON m3.ID = m2.IDMAGASIN
+--        where m2.IDTYPEMVSTOCK!='TPMVST000023'
+-- ;
+-- create or replace view VENTE_CPL_BC_VISEE as
+-- SELECT v.ID,
+--        v.DESIGNATION,
+--        v.IDMAGASIN,
+--        m.VAL AS IDMAGASINLIB,
+--        v.DATY,
+--        v.REMARQUE,
+--        v.ETAT,
+--        CASE
+--            WHEN v.ETAT = 1 THEN 'CREE'
+--            WHEN v.ETAT = 11 THEN 'VISEE'
+--            WHEN v.ETAT = 0 THEN 'ANNULEE'
+--            END
+--              AS ETATLIB,
+--        v2.MONTANTTOTAL,
+--        v2.IDDEVISE,
+--        v.IDCLIENT,
+--        c.NOM AS CLIENTLIB,
+--        cast(V2.MONTANTTVA as number(30,2)) as MONTANTTVA,
+--        cast(V2.MONTANTTTC as number(30,2)) as montantttc,
+--        cast(V2.MONTANTTTCAR as number(30,2)) as MONTANTTTCAR,
+--        cast(nvl(mv.credit,0)-nvl(ACG.MONTANTPAYEar, 0) AS NUMBER(30,2)) AS montantpaye,
+--        cast(V2.MONTANTTTC-nvl(mv.credit,0)-nvl(ACG.MONTANTTTCAR, 0)+nvl(acg.MONTANTPAYEAR,0) AS NUMBER(30,2)) AS montantreste,
+--        nvl(ACG.MONTANTTTCAR, 0)  as avoir,
+--        v2.tauxDeChange AS tauxDeChange,v2.MONTANTREVIENT,cast((V2.MONTANTTTCAR-v2.MONTANTREVIENT) as number(20,2))  as margeBrute,
+--        v.IDRESERVATION,
+--        v.idorigine as IDORIGINE,
+--        cast(nvl(ACG.MONTANTTTCAR, 0)  as NUMBER(30,2)) as montantAvoir
+-- FROM VENTE v
+--          LEFT JOIN CLIENT c ON c.ID = v.IDCLIENT
+--          LEFT JOIN MAGASIN m ON m.ID = v.IDMAGASIN
+--          JOIN VENTEMONTANTLEGER v2 ON v2.ID = v.ID
+--          LEFT JOIN mouvementcaisseGroupeFacture mv ON v.id=mv.IDORIGINE
+--          LEFT JOIN AVOIRFCMONTANT ACG on ACG.IDVENTE = v.ID
+--          --left join AS_BONDELIVRAISON_CLIENT asbl on asbl.ID = v.IDORIGINE
+-- where v.ETAT = 11
+-- ;
+
+--  create or replace view VENTE_CPL_BC_VISEE as
+-- SELECT v.ID,
+--        v.DESIGNATION,
+--        v.IDMAGASIN,
+--        m.VAL AS IDMAGASINLIB,
+--        v.DATY,
+--        v.REMARQUE,
+--        v.ETAT,
+--        CASE
+--            WHEN v.ETAT = 1 THEN 'CREE'
+--            WHEN v.ETAT = 11 THEN 'VISEE'
+--            WHEN v.ETAT = 0 THEN 'ANNULEE'
+--            END
+--              AS ETATLIB,
+--        v2.MONTANTTOTAL,
+--        v2.IDDEVISE,
+--        v.IDCLIENT,
+--        c.NOM AS CLIENTLIB,
+--        cast(V2.MONTANTTVA as number(30,2)) as MONTANTTVA,
+--        cast(V2.MONTANTTTC as number(30,2)) as montantttc,
+--        cast(V2.MONTANTTTCAR as number(30,2)) as MONTANTTTCAR,
+--        cast(nvl(mv.MONTANT,0)-nvl(ACG.MONTANTPAYEar, 0) AS NUMBER(30,2)) AS montantpaye,
+--        cast(V2.MONTANTTTC-nvl(mv.MONTANT,0)-nvl(ACG.MONTANTTTCAR, 0)+nvl(acg.MONTANTPAYEAR,0) AS NUMBER(30,2)) AS montantreste,
+--        nvl(ACG.MONTANTTTCAR, 0)  as avoir,
+--        v2.tauxDeChange AS tauxDeChange,v2.MONTANTREVIENT,cast((V2.MONTANTTTCAR-v2.MONTANTREVIENT) as number(20,2))  as margeBrute,
+--        v.IDRESERVATION,
+--        v.idorigine as IDORIGINE,
+--        cast(nvl(ACG.MONTANTTTCAR, 0)  as NUMBER(30,2)) as montantAvoir
+-- FROM VENTE v
+--          LEFT JOIN CLIENT c ON c.ID = v.IDCLIENT
+--          LEFT JOIN MAGASIN m ON m.ID = v.IDMAGASIN
+--          JOIN VENTEMONTANTLEGER v2 ON v2.ID = v.ID
+--          LEFT JOIN LIAISONPAIEMENTTOTAL mv ON v.id=mv.ID2
+--          LEFT JOIN AVOIRFCMONTANT ACG on ACG.IDVENTE = v.ID
+--          --left join AS_BONDELIVRAISON_CLIENT asbl on asbl.ID = v.IDORIGINE
+-- where v.ETAT = 11
+-- ;
+
+
+-- create or replace view VENTEMONTANTLEGER as
+-- SELECT vd.IDVENTE AS ID,
+--        cast(SUM((1 - nvl(vd.remise / 100, 0)) * (NVL(vd.QTE, 0) * NVL(vd.PU, 0)) -
+--                 (nvl(v.fraislivraison, 0) * nvl(ing.CALORIE, 0) * vd.QTE)) as number(30, 2))                          AS montanttotal,
+--        cast(SUM((NVL(vd.QTE, 0) * NVL(vd.PU, 0))) -
+--             SUM((1 - nvl(vd.remise / 100, 0)) * (NVL(vd.QTE, 0) * NVL(vd.PU, 0))) as number(30, 2))                  AS montantremise,
+--        cast(sum(nvl(v.fraislivraison, 0) * NVL(ing.CALORIE, 0) * NVL(vd.QTE, 0)) as number(30, 5)   )                                                                                                    as frais,
+--        cast(SUM((NVL(vd.QTE, 0) * NVL(vd.PuAchat, 0))) as number(30, 2))                                             AS montanttotalachat,
+--        cast(SUM(((1 - nvl(vd.remise / 100, 0)) * (NVL(vd.QTE, 0) * NVL(vd.PU, 0)) -
+--                 (nvl(v.fraislivraison, 0) * nvl(ing.CALORIE, 0) * vd.QTE)) * (NVL(VD.TVA, 0)) /
+--                 100) as number(30, 2))                                                                               AS montantTva,
+--        cast(SUM(((1 - nvl(vd.remise / 100, 0)) * (NVL(vd.QTE, 0) * NVL(vd.PU, 0)) -
+--                  (nvl(v.fraislivraison, 0) * nvl(ing.CALORIE, 0) * vd.QTE)) * (NVL(VD.TVA, 0)) / 100) +
+--             SUM((1 - nvl(vd.remise / 100, 0)) * (NVL(vd.QTE, 0) * NVL(vd.PU, 0)) -
+--                 (nvl(v.fraislivraison, 0) * nvl(ing.CALORIE, 0) * vd.QTE)) as number(30, 2))                          as montantTTC,
+--        NVL(vd.IDDEVISE, 'AR')                                                                                        AS IDDEVISE,
+--        NVL(avg(vd.tauxDeChange), 1)                                                                                  AS tauxDeChange,
+--        cast(SUM((1 - nvl(vd.remise / 100, 0)) * (NVL(vd.QTE, 0) * NVL(vd.PU, 0) -
+--                                                  (nvl(v.fraislivraison, 0) * nvl(ing.CALORIE, 0) * vd.QTE) *
+--                                                  NVL(VD.TAUXDECHANGE, 1)) *
+--                 (NVL(VD.TVA, 0)) / 100) +
+--             SUM(((1 - nvl(vd.remise / 100, 0)) *
+--                  (NVL(vd.QTE, 0) * NVL(vd.PU, 0) - (nvl(v.fraislivraison, 0) * nvl(ing.CALORIE, 0) * vd.QTE)) *
+--                  NVL(VD.TAUXDECHANGE, 1)) -
+--                 ((nvl(v.fraislivraison, 0) * nvl(ing.CALORIE, 0) * vd.QTE))) as number(30, 2))                        as montantTTCAR,
+--        cast(sum(vd.PUREVIENT * vd.QTE) as number(20, 2))                                                             as montantRevient,
+--        v.IDRESERVATION,nvl(sum(ing.CALORIE* vd.QTE),0) as poids,sum(vd.QTE) as colis
+-- FROM VENTE_DETAILS vd
+--          LEFT JOIN VENTE v ON v.ID = vd.IDVENTE
+--          left join AS_INGREDIENTS ing on ing.id = vd.IDPRODUIT
+-- GROUP BY vd.IDVENTE, vd.IDDEVISE, v.IDRESERVATION
+-- ;
+
+
+--  create or replace view PROFORMAMONTANTLEGER as
+-- SELECT v.ID,
+--        cast(SUM((NVL(vd.QTE, 0) * NVL(vd.PU, 0)) -
+--                 (nvl(v.fraislivraison, 0) * nvl(ing.CALORIE, 0) * vd.QTE)) as number(30, 2))                          AS montanttotal,
+--        cast(SUM((NVL(vd.QTE, 0) * NVL(vd.PU, 0))) -
+--             SUM((1 - nvl(vd.remise / 100, 0)) * (NVL(vd.QTE, 0) * NVL(vd.PU, 0))) as number(30, 2))                  AS montantremise,
+--        cast(sum(nvl(v.fraislivraison, 0) * NVL(ing.CALORIE, 0) * NVL(vd.QTE, 0)) as number(30, 5)   )      as frais,
+--        cast(SUM((NVL(vd.QTE, 0) * NVL(vd.PuAchat, 0))) as number(30, 2))                                             AS montanttotalachat,
+--        cast(SUM(((1 - nvl(vd.remise / 100, 0)) * (NVL(vd.QTE, 0) * NVL(vd.PU, 0)) -
+--                 (nvl(v.fraislivraison, 0) * nvl(ing.CALORIE, 0) * vd.QTE)) * (NVL(VD.TVA, 0)) /
+--                 100) as number(30, 2))                                                                               AS montantTva,
+--        cast(SUM(((1 - nvl(vd.remise / 100, 0)) * (NVL(vd.QTE, 0) * NVL(vd.PU, 0)) -
+--                  (nvl(v.fraislivraison, 0) * nvl(ing.CALORIE, 0) * vd.QTE)) * (NVL(VD.TVA, 0)) / 100) +
+--             SUM((1 - nvl(vd.remise / 100, 0)) * (NVL(vd.QTE, 0) * NVL(vd.PU, 0)) -
+--                 (nvl(v.fraislivraison, 0) * nvl(ing.CALORIE, 0) * vd.QTE)) as number(30, 2))                          as montantTTC,
+--        NVL(vd.IDDEVISE, 'AR')                                                                                        AS IDDEVISE,
+--        NVL(avg(vd.tauxDeChange), 1)                                                                                  AS tauxDeChange,
+--        cast((SUM(((1 - nvl(vd.remise / 100, 0)) * (NVL(vd.QTE, 0) * NVL(vd.PU, 0)) -
+--                  (nvl(v.fraislivraison, 0) * nvl(ing.CALORIE, 0) * vd.QTE)) * (NVL(VD.TVA, 0)) / 100) +
+--             SUM((1 - nvl(vd.remise / 100, 0)) * (NVL(vd.QTE, 0) * NVL(vd.PU, 0)) -
+--                 (nvl(v.fraislivraison, 0) * nvl(ing.CALORIE, 0) * vd.QTE))*NVL(avg(vd.tauxDeChange), 1) ) as number(30, 2)) as montantTTCAR,
+--        cast(sum(vd.PUREVIENT * vd.QTE) as number(20, 2))                                                             as montantRevient,
+--        v.IDRESERVATION,nvl(sum(vd.QTE*ing.CALORIE),0) as poids,sum(vd.QTE) as colis,
+--        cast(sum((vd.QTE * vd.PU) - ((vd.QTE * vd.PU) * NVL(vd.remise, 0)) / 100  * nvl(vd.ristourne, 0) /100) as number(30, 2)) as montantristourne
+-- FROM PROFORMA_DETAILS vd
+--          LEFT JOIN PROFORMA v ON v.ID = vd.IDPROFORMA
+--          left join AS_INGREDIENTS ing on ing.id = vd.IDPRODUIT
+-- GROUP BY v.id, vd.IDDEVISE, v.IDRESERVATION order by v.id asc;
+
+
+
+-- create or replace view PROFORMA_CPL as
+-- SELECT v.ID,
+--        v.DESIGNATION,
+--        v.IDMAGASIN,
+--        m.VAL                                                                                  AS IDMAGASINLIB,
+--        v.DATY,
+--        v.REMARQUE,
+--        v.ETAT,
+--        CASE
+--            WHEN v.ETAT = 1 THEN 'CR&Eacute;&Eacute;'
+--            WHEN v.ETAT = 11 THEN 'VIS&Eacute;'
+--            WHEN v.ETAT = 0 THEN 'ANNUL&Eacute;E'
+--            WHEN v.ETAT = 12 THEN '<span style=color: green;>CL&Ocirc;TUR&Eacute;</span>'
+--            END
+--                                                                                               AS ETATLIB,
+--        v2.IDDEVISE,
+--        v.IDCLIENT,
+--        c.CODECLIENT,
+--        c.NOM                                                                                  AS IDCLIENTLIB,
+--        c.ADRESSE,
+--        c.TELEPHONE                                                                            AS CONTACT,
+--        cast(V2.POIDS as number(30, 2))                                                   as poidstotal,
+--        cast(V2.montanttotal as number(30, 2))                                                      as montant,
+--        cast(V2.montantremise as number(30, 2))                                                as MONTANTREMISE,
+--        cast(V2.montantristourne as number(30, 2))                                             as MONTANTRistourne,
+--        cast(nvl(v.fraislivraison, 0) as number(10, 2)) as fraislivraison,
+--        cast(V2.FRAIS as number(30, 2))                                               as fraistransport,
+--        cast(v2.MONTANTTOTAL as number(30, 2))                                                 AS MONTANTTOTAL,
+--        cast(V2.MONTANTTVA as number(30, 2))                                                   as MONTANTTVA,
+--        cast(V2.MONTANTTTC as number(30, 2))                                                   as montantttc,
+--        cast(V2.MONTANTTTCAR as number(30, 2))                                                 as MONTANTTTCAR,
+--        cast(0 AS number(30, 2))                     AS montantpaye,
+--        cast(0 AS number(30, 2)) AS montantreste,
+--        0                                                             as avoir,
+--        cast(v2.tauxDeChange  as number(10, 2))                                                                        AS tauxDeChange,
+--        cast(v2.MONTANTREVIENT as number(20, 5))                                               AS MONTANTREVIENT,
+--        cast((COALESCE(V2.MONTANTTTCAR,0) - COALESCE(v2.MONTANTREVIENT,0)) as number(20, 5))                           as margeBrute,
+--        v.IDRESERVATION,
+--        v.IDORIGINE,
+--        nvl(v.remise, 0) as remise,
+--        v.NUMEROPROFORMA,
+--        v.IDCOMMANDE,
+--        CASE
+--            WHEN v.modelivraison = 1 THEN 'LIVRAISON'
+--            WHEN v.modelivraison = 2 THEN 'RECUPERATION'
+--            END AS modelivraisonlib,
+--        v.lieuLivraison AS lieulivraison,
+--        v.datelivraison AS datelivraison,
+--        v.reference
+-- FROM PROFORMA v
+--          LEFT JOIN CLIENT c ON c.ID = v.IDCLIENT
+--          LEFT JOIN MAGASIN2 m ON m.ID = v.IDMAGASIN
+--          JOIN PROFORMAMONTANTLEGER v2 ON v2.ID = v.ID;
+
+
+
+-- alter table MOUVEMENTCAISSE add heure VARCHAR2(10);
+
+-- alter table REPORTCAISSE add heure VARCHAR2(10);
+
+-- create or replace view MOUVEMENTCAISSECPL as
+-- SELECT m.ID,
+-- 	       m.DESIGNATION,
+-- 	       m.IDCAISSE,
+-- 	       c.VAL   AS IDCAISSELIB,
+-- 	       m.IDVENTEDETAIL,
+-- 	       m.IDVIREMENT,
+-- 	       m.DEBIT,
+-- 	       m.CREDIT,
+-- 	      	CAST(
+--     CASE
+--         WHEN m.credit > 0 THEN NVL(m.CREDIT, 0) - NVL(l.MONTANT, 0)
+--         ELSE 0
+--     END AS NUMBER(36,5)
+-- ) AS soldecredit,
+-- CAST(
+--     CASE
+--         WHEN m.debit > 0 THEN NVL(m.DEBIT, 0) - NVL(l.MONTANT, 0)
+--         ELSE 0
+--     END AS NUMBER(36,5)
+-- ) AS soldedebit,
+-- 	       m.DATY,
+-- 	       m.ETAT,
+-- 	       CASE
+-- 	           WHEN m.ETAT = 0
+-- 	               THEN 'ANNULEE'
+-- 	           WHEN m.ETAT = 1
+-- 	               THEN 'CREEE'
+-- 	           WHEN m.ETAT = 11
+-- 	               THEN 'VALIDEE'
+-- 	           WHEN m.ETAT = 8
+-- 	               THEN 'A COMPTABILISER'
+-- 	           END AS ETATLIB,
+-- 	       vd.IDVENTE,
+-- 	       m.IDORIGINE as idorigine,
+-- 	       m.idtiers,
+-- 	       t.NOM AS tiers,
+-- 	       m.idPrevision,
+-- 	       m.idOP,
+-- 	       m.taux,
+-- 	       m.COMPTE,
+-- 	       m.IDDEVISE,
+-- 	       m.idtraite,
+-- 	       mp.VAL as idModePaiementLib,
+-- 	       m.idmvtcaissemere,
+-- 	       m.reference,
+-- 	       m.datycomptabilisation,
+-- 	       m.UPDATED_AT, m.heure
+-- 	FROM MOUVEMENTCAISSE m
+-- 	         LEFT JOIN CAISSE c ON c.ID = m.IDCAISSE
+-- 	         LEFT JOIN VENTE_DETAILS vd ON vd.ID = m.IDVENTEDETAIL
+-- 	         LEFT JOIN tiers t ON t.ID = m.idtiers
+-- 	         left join liaisonpaiementmvtcaissegrp l on l.idmvtcaisse=m.id
+-- 	        left join modepaiement mp on m.idmodepaiement = mp.id;
+
+-- create or replace view REPORTCAISSELIB as
+-- SELECT
+-- r.ID ,
+-- r.IDCAISSE ,
+-- c.VAL AS IDCAISSELIB,
+-- CAST(r.MONTANT AS NUMBER(30,5)) AS MONTANT ,
+-- CAST(r.MONTANTTHEORIQUE AS NUMBER(30,5)) AS MONTANTTHEORIQUE ,
+-- r.DATY ,
+-- r.ETAT ,r.heure,
+-- CASE
+-- 	WHEN r.ETAT = 0
+-- 	THEN 'ANNULEE'
+-- 	WHEN r.ETAT = 1
+-- 	THEN 'CREE'
+-- 	WHEN r.ETAT = 11
+-- 	THEN 'VALIDEE'
+-- END AS ETATLIB
+-- FROM REPORTCAISSE r
+-- LEFT JOIN CAISSE c ON c.ID  = r.IDCAISSE;
+
+-- insert into COMPTA_COMPTE (ID, COMPTE, LIBELLE, TYPECOMPTE, CLASSY, ANALYTIQUE_OBLI, IDJOURNAL, CODEIMPOT)
+-- select 'COMCAUTO'||SEQ_COMPTA_COMPTE.nextval,'512'||SUBSTR(c.id, -3) ,c.VAL,1,5,null,'COMP000035',null from CAISSE c where c.compte not in  (select COMPTE from COMPTA_COMPTE where compte is not null);
+-- update caisse ca set ca.COMPTE='512'||SUBSTR(ca.id, -3) where ca.id  in (
+-- select c.id from CAISSE c where c.compte not in  (select COMPTE from COMPTA_COMPTE where compte is not null));
+
+
+
+-- create or replace view V_ETATSTOCK_ENTREE_STANDARD as
+-- WITH max_inventaire AS (
+--     -- ?    tape 1 : On extrait la date maximale valide par produit une fois pour toutes
+--     SELECT
+--         invff.MVTSRC,
+--         MAX(imeref.DATY) AS max_daty
+--     FROM INVENTAIREFILLE invff
+--              LEFT JOIN inventaireDateHeure imeref ON imeref.ID = invff.IDINVENTAIRE
+--     WHERE imeref.ETAT >= 11
+--     GROUP BY invff.MVTSRC
+-- ),
+--      inv_final_precalc AS (
+--          -- ?   tape 2 : On r??cup??re les quantit??s associ??es ?  cette date maximale
+--          SELECT
+--              invfff.MVTSRC,
+--              invfff.QUANTITE,
+--              imm.DATY AS invdaty
+--          FROM INVENTAIREFILLE invfff
+--                   LEFT JOIN inventaireDateHeure imm ON imm.ID = invfff.IDINVENTAIRE
+--                   INNER JOIN max_inventaire mi ON mi.MVTSRC = invfff.MVTSRC AND imm.DATY = mi.max_daty
+--          WHERE imm.ETAT >= 11
+--      ),
+--      somme_precalc AS (
+--          -- ?   tape 3 : Calcul des sommes globales (sorties/entr??es) sans sous-requ??te corr??l??e cass??e
+--          SELECT
+--              mff.MVTSRC,
+--              NVL(SUM(mff.ENTREE), 0) AS entree,
+--              NVL(SUM(mff.SORTIE), 0) AS sortie
+--          FROM MVTSTOCKFILLE mff
+--                   LEFT JOIN mvtStockDateHeure meref ON meref.ID = mff.IDMVTSTOCK
+--                   LEFT JOIN inv_final_precalc inv ON inv.MVTSRC = mff.MVTSRC
+--          WHERE meref.DATY > nvl(inv.invdaty,to_date('01/01/2025','DD-MM-YYYY')) and meref.ETAT>=11
+--            AND meref.IDTYPEMVSTOCK != 'TPMVST000023'
+--          GROUP BY mff.MVTSRC
+--      ),
+--      main_data AS (
+--          -- ?   tape 4 : Requ??te principale avec application exacte des r??gles de calcul d'origine
+--          SELECT
+--              mf.ID,
+--              mere.DATY,
+--              CAST(NVL(invfinal.QUANTITE, 0) AS NUMBER(30,2)) AS invquantite,
+
+--              CASE WHEN mere.DATY > NVL(invfinal.invdaty, TO_DATE('01/01/2025','DD-MM-YYYY'))
+--                       THEN CAST(NVL(mf.ENTREE, 0) AS NUMBER(30,2))
+--                   ELSE 0
+--                  END AS ENTREE,
+
+--              CAST(NVL(somme.SORTIE, 0) AS NUMBER(30,2)) AS sortie,
+
+--              CASE WHEN mere.DATY <= NVL(invfinal.invdaty, TO_DATE('01/01/2025','DD-MM-YYYY'))
+--                       THEN CAST((NVL(invfinal.QUANTITE, 0) - NVL(somme.SORTIE, 0)) AS NUMBER(30,2))
+--                   ELSE CAST((NVL(invfinal.QUANTITE, 0) + mf.ENTREE - NVL(somme.SORTIE, 0)) AS NUMBER(30,2))
+--                  END AS reste,
+
+--              ai.LIBELLE AS idproduitlib,
+--              ai.CATEGORIEINGREDIENT,
+--              ai.UNITE,
+--              ai.TYPESTOCK,
+--              u.VAL AS idunitelib,
+--              c.VAL AS idtypeproduitlib,
+--              mf.PU,
+--              b.IDFOURNISSEUR,
+--              b.IDFOURNISSEURLIB,
+--              mf.IDPRODUIT,
+--              mere.IDMAGASIN,
+--              m.VAL AS idmagasinlib,
+--              invfinal.invdaty AS invdaty
+--          FROM MVTSTOCKFILLE mf
+--                   LEFT JOIN mvtStockDateHeure mere ON mere.id = mf.IDMVTSTOCK
+--                   LEFT JOIN somme_precalc somme ON somme.MVTSRC = mf.id
+--                   LEFT JOIN inv_final_precalc invfinal ON invfinal.MVTSRC = mf.ID
+--                   LEFT JOIN AS_INGREDIENTS ai ON ai.id = mf.IDPRODUIT
+--                   LEFT JOIN CATEGORIEINGREDIENT c ON ai.CATEGORIEINGREDIENT = c.id
+--                   LEFT JOIN MAGASINPOINT m ON mere.IDMAGASIN = m.id
+--                   LEFT JOIN AS_UNITE u ON ai.UNITE = u.id
+--                   LEFT JOIN AS_BONDELIVRAISON_LIB b ON b.ID = mere.IDOBJET
+--          WHERE mf.ENTREE > 0
+--            AND mere.IDTYPEMVSTOCK != 'TPMVST000023'
+--            AND mere.ETAT >= 11
+--      )
+
+-- SELECT
+--     ID, DATY, CAST(invquantite AS NUMBER(30,2)) AS invquantite, CAST(entree AS NUMBER(30,2)) AS entree, CAST(sortie AS NUMBER(30,2)) AS sortie, CAST(reste AS NUMBER(30,2)) AS reste,
+--     CAST(reste AS NUMBER(30,2)) AS quantite,
+--     CAST(reste * PU AS NUMBER(30,2)) AS montantreste,
+--     idproduitlib, CATEGORIEINGREDIENT, UNITE, TYPESTOCK, idunitelib, idtypeproduitlib,
+--     PU, IDFOURNISSEUR, IDFOURNISSEURLIB, IDPRODUIT, IDMAGASIN, idmagasinlib, invdaty
+-- FROM main_data
+-- WHERE reste != 0;
+
+-- UPDATE historique
+-- SET heure = '00' || SUBSTR(heure, 3)
+-- WHERE heure LIKE '24:%';
+
+-- update inventaire i set i.heure=(select his.heure from
+-- (select i.id,max(histo.heure) as heure from INVENTAIRE i
+-- left join
+-- (select substr(heure,1,8) as heure,REFOBJET  from HISTORIQUE where ACTION like 'Validation%') histo on histo.refobjet=i.id
+-- where i.ETAT>=11 and i.HEURE is null group by i.id) his where his.id=i.id) where i.heure is null and i.ETAT>=11;
+
+
+-- create table mvtStAvecHisto as
+-- select m.id,max(histo.heure) as heure from MVTSTOCK m
+-- join
+-- (select substr(heure,1,8) as heure,REFOBJET  from HISTORIQUE where ACTION like 'Validation%') histo on histo.refobjet=m.id
+-- where m.ETAT>=11 and m.HEURE is null group by m.id;
+
+-- update MVTSTOCK mv set mv.HEURE=(select his.heure from
+-- mvtStAvecHisto his where his.id=mv.id) where mv.heure is null and mv.ETAT>=11
+-- and exists (select 1 from mvtStAvecHisto mh where mh.id=mv.id );
+
+-- drop table mvtStAvecHisto;
+
+-- create or replace view MOUVEMENTCAISSEavecHeure as
+-- select m.ID,
+--        DESIGNATION,
+--        IDCAISSE,
+--        IDVENTEDETAIL,
+--        IDVIREMENT,
+--        TO_DATE(TO_CHAR(m.DATY, 'YYYY-MM-DD') || ' ' || NVL(m.HEURE, '00:00:00'), 'YYYY-MM-DD HH24:MI:SS') as DATY,
+--        ETAT,
+--        IDOP,
+--        IDORIGINE,
+--        IDDEVISE,
+--        IDTIERS,
+--        COMPTE,
+--        IDPREVISION,
+--        IDTRAITE,
+--        ETATVERSEMENT,
+--        IDMODEPAIEMENT,
+--        IDMVTCAISSEMERE,
+--        REFERENCE,
+--        UPDATED_AT,
+--        DATYCOMPTABILISATION,
+--        ACQUEREUR,
+--        IDTYPEPAIEMENT,
+--        DEBIT,
+--        CREDIT,
+--        TAUX,
+--        HEURE
+-- from MOUVEMENTCAISSE m;
+
+-- create or replace view reportCaisseAvecHeure as
+-- select r.ID,
+--        IDCAISSE,
+--        MONTANT,
+--        MONTANTTHEORIQUE,
+--        TO_DATE(TO_CHAR(DATY, 'YYYY-MM-DD') || ' ' || NVL(HEURE, '00:00:00'), 'YYYY-MM-DD HH24:MI:SS') as DATY,
+--        ETAT,
+--        REMARQUE,
+--        HEURE
+-- from REPORTCAISSE r;
+
+-- create or replace view v_Etatcaisse as
+-- WITH max_inventaire AS (
+--     -- Étape 1 : On extrait la date maximale valide et la quantité par COUPLE produit/magasin
+--     SELECT rep.IDCAISSE,
+--            MAX(rep.DATY)                                             AS max_daty,
+--            MAX(rep.MONTANT) KEEP (DENSE_RANK LAST ORDER BY rep.DATY) AS montant_max_daty
+--     FROM REPORTCAISSEAVECHEURE rep
+--     WHERE rep.ETAT >= 11 --and rep.DATY<=TO_DATE('27/07/2026','DD-MM-YYYY')
+--     GROUP BY rep.IDCAISSE),
+--     tauxChangeMax AS (
+--          SELECT
+--              max(tau.TAUX) KEEP (DENSE_RANK LAST ORDER BY tau.DATY) as taux,
+--              tau.IDDEVISE as tauxIdDevise,
+--              max(tau.DATY) as tauxDaty
+--          FROM TAUXDECHANGE tau group by IDDEVISE
+--      ),
+--      somme_precalc AS (
+--          SELECT c.ID as idcaisse, c.VAL as idCaisselib,
+--                 NVL(SUM(CASE
+--                             WHEN mff.DATY > NVL(inv.max_daty, TO_DATE('01/01/2025', 'DD-MM-YYYY')) THEN mff.CREDIT
+--                             ELSE 0 END), 0)       AS credit,
+
+--                 NVL(SUM(CASE
+--                             WHEN mff.DATY > NVL(inv.max_daty, TO_DATE('01/01/2025', 'DD-MM-YYYY')) THEN mff.DEBIT
+--                             ELSE 0 END), 0)       AS debit,
+--                 max(inv.max_daty)                 AS dateDernierReport,
+--                 nvl(max(inv.montant_max_daty), 0) as montantDernierReport,
+--                 c.IDPOINT,p.VAL as idPointlib,c.IDTYPECAISSE,typ.VAL as idTypeCaisselib,c.IDDEVISE,
+--                 max(tau.taux) as taux
+--          FROM Caisse c
+--          left join    MOUVEMENTCAISSEAVECHEURE mff on mff.IDCAISSE=c.ID and mff.ETAT>=11-- and mff.DATY<=TO_DATE('27/07/2026','DD-MM-YYYY')
+--          JOIN max_inventaire inv ON inv.IDCAISSE=c.ID
+--          left JOIN tauxChangeMax TAU ON TAU.tauxIdDevise=C.IDDEVISE
+--          left join point p on p.ID=c.IDPOINT
+--          left join TYPECAISSE typ on typ.ID=c.IDTYPECAISSE
+--          GROUP BY c.id,c.IDPOINT,p.VAL,c.IDTYPECAISSE,typ.VAL,c.VAL,c.IDDEVISE)
+-- -- Sélection finale
+-- SELECT idcaisse,idCaisselib||' ('||nvl(IDDEVISE,'AR')||')' as idCaisselib, cast(credit as number(30,2)) as credit, cast(debit as number(30,2)) as debit,
+--        cast(montantDernierReport+credit-debit as number(30,2)) as reste, cast(nvl(taux,1) as number(30,2)) as taux,
+--        cast((montantDernierReport+credit-debit)*nvl(taux,1) as number(30,2)) as resteAr, null as daty,idcaisse as id,
+--        datedernierreport, cast(montantdernierreport as number(30,2)) as montantdernierreport, idpoint, idpointlib, idtypecaisse, idtypecaisselib
+-- FROM somme_precalc ;
+
+-- drop materialized view V_ETATCAISSE_devise_AR;
+-- create or replace view V_ETATCAISSE_devise_AR as select * from v_Etatcaisse;

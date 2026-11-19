@@ -1,0 +1,25 @@
+-- 2026-07-30-10_44-aigledorstandard
+
+CREATE OR REPLACE VIEW REPORTCAISSELIB AS
+SELECT
+    r.ID ,
+    r.IDCAISSE ,
+    c.VAL AS IDCAISSELIB,
+    CAST(r.MONTANT AS NUMBER(30,5)) AS MONTANT ,
+    CAST(r.MONTANTTHEORIQUE AS NUMBER(30,5)) AS MONTANTTHEORIQUE ,
+    r.DATY ,
+    r.ETAT ,r.heure,
+    CASE
+        WHEN r.ETAT = 0
+            THEN 'ANNULÉE'
+        WHEN r.ETAT = 1
+            THEN 'CRÉÉE'
+        WHEN r.ETAT = 11
+            THEN 'VALIDÉE'
+        END AS ETATLIB,
+    r.TYPEREPORT
+FROM REPORTCAISSE r
+         LEFT JOIN CAISSE c ON c.ID  = r.IDCAISSE
+
+
+;

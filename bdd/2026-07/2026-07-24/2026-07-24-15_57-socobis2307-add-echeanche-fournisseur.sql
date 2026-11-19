@@ -1,0 +1,40 @@
+alter table FOURNISSEUR ADD ECHEANCE  NUMBER(30, 2);
+
+alter table FACTUREFOURNISSEUR add echeancefacture Number(30, 2);
+
+create or replace view FACTUREFOURNISSEURAUTOCOMPLETE as
+SELECT
+    f.ID,
+    CASE
+        WHEN f.IDFOURNISSEUR IS NOT NULL
+            THEN f.IDFOURNISSEUR||'---'||fr.NOM
+        ELSE f.IDFOURNISSEUR
+        END AS IDFOURNISSEUR ,
+    f.IDMODEPAIEMENT,
+    f.DATY,
+    f.DESIGNATION,
+    f.DATEECHEANCEPAIEMENT,
+    f.ETAT,
+    f.REFERENCE,
+    f.IDBC,
+    f.DEVISE,
+    f.TAUX,
+    f.IDMAGASIN,
+    f.IDDEVISE,
+    f.ESTPREVU,
+    f.DATYPREVU,
+    f.NUMERO,
+    f.TYPEACHAT,
+    f.IDTYPEFACTURE,
+    f.IDOBJET,
+    f.IDREF,
+    f.IDDMDACHAT,
+    f.IDFACTUREPRINCIPALE,
+    f.SERVICE,
+    f.TYPEFACTUREFOURNISSEUR,
+    f.echeancefacture
+FROM FACTUREFOURNISSEUR f
+         LEFT JOIN FOURNISSEUR fr ON fr.id = f.IDFOURNISSEUR
+/
+
+

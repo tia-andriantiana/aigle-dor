@@ -1,0 +1,2 @@
+INSERT INTO TYPEABSENCE (ID, VAL, DESCE)
+VALUES ('TYP00MAT', 'Maternité', 'Maternité');

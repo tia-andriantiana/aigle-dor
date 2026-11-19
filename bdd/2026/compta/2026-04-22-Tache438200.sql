@@ -1,0 +1,13 @@
+create or replace view MOUVEMENTCAISSECPL_A_VALIDER as
+SELECT
+    ID,DESIGNATION,IDCAISSE,IDCAISSELIB,IDVENTEDETAIL,IDVIREMENT,DEBIT,CREDIT,DATY,ETAT,ETATLIB,IDVENTE,IDORIGINE,IDTIERS,TIERS,DATYCOMPTABILISATION
+FROM
+    MOUVEMENTCAISSECPL m
+WHERE
+    DATYCOMPTABILISATION is null and etat > 7;
+
+INSERT INTO menudynamique (id, libelle, icone, href, rang, niveau, id_pere) VALUES ('MENDYN177684652514350', 'Validation paiement', 'check', 'module.jsp?but=vente/validation-comptable.jsp', 10, 2, 'MNDN274');
+UPDATE menudynamique SET rang = 6 WHERE id = 'MNDN285';
+UPDATE menudynamique SET rang = 7 WHERE id = 'MENDYN1769515257466822';
+UPDATE menudynamique SET rang = 8 WHERE id = 'MENDYN1766386514657608';
+UPDATE menudynamique SET rang = 9 WHERE id = 'MENDYN176951991615864';

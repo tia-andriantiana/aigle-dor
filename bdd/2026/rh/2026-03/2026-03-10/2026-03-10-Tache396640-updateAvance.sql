@@ -1,0 +1,1 @@
+alter table AVANCE add DATEDEBLOCAGE DATE;

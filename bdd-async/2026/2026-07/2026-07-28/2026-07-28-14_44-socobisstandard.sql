@@ -1,0 +1,1 @@
+ALTER TABLE CLOTURECAISSE ADD heure varchar(255);

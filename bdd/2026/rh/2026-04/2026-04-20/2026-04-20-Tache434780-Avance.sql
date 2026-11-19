@@ -1,0 +1,2 @@
+-- Stefan
+ALTER TABLE Avance ADD MOIS NUMBER(38,0);

@@ -1,0 +1,28 @@
+create or replace view AVOIRFCFILLELIB_PDF as
+SELECT
+    AF.ID,
+    AF.IDAVOIRFC,
+    AF.IDPRODUIT,
+    AF.IDORIGINE,
+    AF.QTE,
+    AF.PU,
+    AF.REMISE,
+    AF.TVA,
+    AF.PUACHAT,
+    AF.PUVENTE,
+    AF.IDDEVISE,
+    AF.TAUXDECHANGE,
+    AF.DESIGNATION,
+    AF.IDVENTEDETAILS,
+    P.LIBELLEVENTE AS IDPRODUITLIB,
+    P.CALORIE,
+    P.CALORIE * AF.QTE AS POIDS,
+    AF.PU * AF.QTE AS PTHT,
+    (NVL(AF.pu,0) * NVL(AF.QTE,0)) * NVL(AF.TVA,0) / 100 AS montantTVA,
+    AF.TAUX
+FROM
+    AVOIRFCFILLE AF
+        LEFT JOIN as_ingredients P ON
+        P.id = AF.IDPRODUIT
+order by P.LIBELLEVENTE asc
+;

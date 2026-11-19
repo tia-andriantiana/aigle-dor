@@ -1,0 +1,19 @@
+CREATE OR REPLACE VIEW FabNonRattache AS (
+SELECT
+	f.id AS idfabrication,
+	f.daty AS daty,
+	ffille.IDINGREDIENTS AS idproduit,
+	ai.LIBELLE AS idproduitLib,
+	ffille.qte AS qte,
+	ar.QUANTITE AS qtepetri,
+	l.id AS idligne,
+	l.VAL AS ligne
+FROM
+FABRICATIONCPL f
+LEFT JOIN FABRICATIONFILLE ffille ON f.ID =FFILLE.IDMERE
+LEFT JOIN AS_INGREDIENTS ai ON ai.id=ffille.IDINGREDIENTS
+LEFT JOIN AS_INGREDIENT_MAINTENANCE aim ON aim.id=ffille.IDMACHINE
+LEFT JOIN LIGNE l ON l.id=aim.IDLIGNE
+LEFT JOIN AS_RECETTEOFFFABTABLE ar ON ar.IDPRODUITS = f.IDOFFILLE
+LEFT JOIN RELEVEFAB rfab ON RFAB.IDFAB = f.id
+where ai.ispetri=0 AND f.id NOT IN (SELECT r.idfab FROM RELEVEFAB r));

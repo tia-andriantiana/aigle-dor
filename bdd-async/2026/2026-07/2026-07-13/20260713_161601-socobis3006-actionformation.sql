@@ -1,0 +1,19 @@
+INSERT INTO TYPEFOURNISSEUR (ID, VAL, DESCE)
+VALUES ('TYP000004', 'Formateur', 'Formateur');
+
+
+create or replace view V_FORMATEUR_FF as
+SELECT "ID",
+       "NOM" AS LIBELLE,
+       "NIF",
+       "STAT",
+       "ADRESSE",
+       "CONTACT",
+       "CODEPOSTAL",
+       "COMPTE",
+       "IDTYPEFOURNISSEUR",
+       "COMPTEAUXILIAIRE",
+       "ESTACTIF"
+FROM FOURNISSEUR
+WHERE IDTYPEFOURNISSEUR = 'TYP000004';
+

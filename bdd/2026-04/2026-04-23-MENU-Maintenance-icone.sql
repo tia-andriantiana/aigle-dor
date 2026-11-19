@@ -1,0 +1,1 @@
+UPDATE MENUDYNAMIQUE SET LIBELLE = 'maintenance', ICONE = 'construction', HREF = null, RANG = 6, NIVEAU = 2, ID_PERE = 'MNDN00000002111' where  ID = 'MNDNMT012';

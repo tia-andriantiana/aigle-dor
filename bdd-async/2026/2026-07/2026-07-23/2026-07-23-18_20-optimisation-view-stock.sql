@@ -1,0 +1,293 @@
+--efa executer prod
+
+-- create or replace view VENTEMONTANTLEGER as
+-- SELECT vd.IDVENTE AS ID,
+--        cast(SUM((1 - nvl(vd.remise / 100, 0)) * (NVL(vd.QTE, 0) * NVL(vd.PU, 0)) -
+--                 (nvl(v.fraislivraison, 0) * nvl(ing.CALORIE, 0) * vd.QTE)) as number(30, 2))                          AS montanttotal,
+--        cast(SUM((NVL(vd.QTE, 0) * NVL(vd.PU, 0))) -
+--             SUM((1 - nvl(vd.remise / 100, 0)) * (NVL(vd.QTE, 0) * NVL(vd.PU, 0))) as number(30, 2))                  AS montantremise,
+--        cast(sum(nvl(v.fraislivraison, 0) * NVL(ing.CALORIE, 0) * NVL(vd.QTE, 0)) as number(30, 5)   )                                                                                                    as frais,
+--        cast(SUM((NVL(vd.QTE, 0) * NVL(vd.PuAchat, 0))) as number(30, 2))                                             AS montanttotalachat,
+--        cast(SUM(((1 - nvl(vd.remise / 100, 0)) * (NVL(vd.QTE, 0) * NVL(vd.PU, 0)) -
+--                 (nvl(v.fraislivraison, 0) * nvl(ing.CALORIE, 0) * vd.QTE)) * (NVL(VD.TVA, 0)) /
+--                 100) as number(30, 2))                                                                               AS montantTva,
+--        cast(SUM(((1 - nvl(vd.remise / 100, 0)) * (NVL(vd.QTE, 0) * NVL(vd.PU, 0)) -
+--                  (nvl(v.fraislivraison, 0) * nvl(ing.CALORIE, 0) * vd.QTE)) * (NVL(VD.TVA, 0)) / 100) +
+--             SUM((1 - nvl(vd.remise / 100, 0)) * (NVL(vd.QTE, 0) * NVL(vd.PU, 0)) -
+--                 (nvl(v.fraislivraison, 0) * nvl(ing.CALORIE, 0) * vd.QTE)) as number(30, 2))                          as montantTTC,
+--        NVL(vd.IDDEVISE, 'AR')                                                                                        AS IDDEVISE,
+--        NVL(avg(vd.tauxDeChange), 1)                                                                                  AS tauxDeChange,
+--        cast(SUM((1 - nvl(vd.remise / 100, 0)) * (NVL(vd.QTE, 0) * NVL(vd.PU, 0) -
+--                                                  (nvl(v.fraislivraison, 0) * nvl(ing.CALORIE, 0) * vd.QTE) *
+--                                                  NVL(VD.TAUXDECHANGE, 1)) *
+--                 (NVL(VD.TVA, 0)) / 100) +
+--             SUM(((1 - nvl(vd.remise / 100, 0)) *
+--                  (NVL(vd.QTE, 0) * NVL(vd.PU, 0) - (nvl(v.fraislivraison, 0) * nvl(ing.CALORIE, 0) * vd.QTE)) *
+--                  NVL(VD.TAUXDECHANGE, 1)) -
+--                 ((nvl(v.fraislivraison, 0) * nvl(ing.CALORIE, 0) * vd.QTE))) as number(30, 2))                        as montantTTCAR,
+--        cast(sum(vd.PUREVIENT * vd.QTE) as number(20, 2))                                                             as montantRevient,
+--        v.IDRESERVATION,nvl(sum(vd.POIDS),0) as poids,sum(vd.QTE) as colis
+-- FROM VENTE_DETAILS vd
+--          LEFT JOIN VENTE v ON v.ID = vd.IDVENTE
+--          left join AS_INGREDIENTS ing on ing.id = vd.IDPRODUIT
+-- GROUP BY vd.IDVENTE, vd.IDDEVISE, v.IDRESERVATION
+
+-- ;
+
+-- create or replace view VENTE_CPL as
+-- SELECT v.ID,
+--        v.DESIGNATION,
+--        v.IDMAGASIN,
+--        m.VAL                                                                                         AS IDMAGASINLIB,
+--        v.DATY,
+--        v.REMARQUE,
+--        v.ETAT,
+--        CASE
+--            WHEN v.ETAT = 1 THEN 'CR&Eacute;&Eacute;E'
+--            WHEN v.ETAT = 11 THEN 'VIS&Eacute;E'
+--            WHEN v.ETAT = 0 THEN 'ANNUL&Eacute;E'
+--            END
+--                                                                                                      AS ETATLIB,
+--        cast(v2.MONTANTTOTAL as number(30, 5)) AS MONTANTTOTAL,
+--        v2.IDDEVISE,
+--        v.IDCLIENT,
+--        c.NOM                                                                                         AS IDCLIENTLIB,
+--        cast(V2.MONTANTTVA as number(30, 5))                                                          as MONTANTTVA,
+--        cast(V2.MONTANTTTC as number(30, 5))                                                          as montantttc,
+--        cast(V2.MONTANTTTCAR as number(30, 5))                                                        as MONTANTTTCAR,
+--        cast(nvl(mv.montant, 0) AS number(30, 5))                                                     AS montantpaye,
+--        cast(nvl(V2.MONTANTTTC, 0) - nvl(mv.montant, 0) - nvl(ACG.MONTANTTTCAR-acg.MONTANTPAYEAR, 0) AS number(30, 5)) AS montantreste,
+--        cast(nvl(ACG.MONTANTTTCAR, 0) as number(30, 5))                                             as avoir,
+--        cast(v2.tauxDeChange as number(10, 2))                                                                        AS tauxDeChange,
+--        cast(v2.MONTANTREVIENT as number(20, 5)) AS MONTANTREVIENT  ,
+--        cast((V2.MONTANTTTCAR - v2.MONTANTREVIENT) as number(20, 5))                                  as margeBrute,
+--        v.IDRESERVATION,
+--        case when v.DATYPREVU is null then v.daty else V.DATYPREVU end                                as datyprevu,
+--        rf.REFERENCE                                                                                  as referencefacture,
+--        cast(v2.MONTANTREMISE as number(30, 5)) AS MONTANTREMISE,
+--        cast(nvl(v2.MONTANTTOTAL, 0) + nvl(v2.MONTANTREMISE, 0) as number(30, 5))                                             as montant,
+--        extract(month from v.DATY)                                                                    as mois,
+--        extract(year from v.DATY)                                                                     as annee,
+--        CAST(v2.poids as number(30, 5))                                                               as poids,
+--        CAST(v2.colis as number(30, 5))                                                               as colis,
+--        v.modepaiement,
+--        mp.VAL                                                                                        as modepaiementlib,
+--        nvl(v.fraislivraison, 0) * nvl(v2.poids, 0)                                                   as fraislivraison,
+--        v.modelivraison,
+--        CASE
+--            WHEN v.modelivraison = 1 THEN '<span style=color: green;>LIVRAISON</span>'
+--            WHEN v.modelivraison = 2 THEN '<span style=color: green;>RECUPERATION</span>'
+--            END                                                                                       AS modelivraisonlib,
+--        cast(vr.reste  as number(30, 5)) AS reste,
+--        pv.id                                                                                         as idprovince,
+--        pv.val                                                                                        as provincelib,
+--        --bl.id                                                                                         as idbl,
+--        v.IDORIGINE,
+--        CAST(COALESCE(v.FRAISLIVRAISON,0) AS  number(30, 5))                                                                             as frais,
+--        v.REFERENCEFACT,
+--        v.NUMEROFACTURE,
+--        v.LIEULIVRAISON,
+--        v.DATELIVRAISON,
+--        v.UPDATED_AT,
+--        case
+--            when v.ESTPREVU = 0 then 'Non'
+--            ELSE 'Oui'
+--            END estprevulib,
+--        ce.id AS idecriture,
+--        nvl(blc.daty,v.DATELIVRAISON) AS datedelivraison
+-- FROM VENTE v
+--          LEFT JOIN CLIENT c ON c.ID = v.IDCLIENT
+--          left join PROVINCE pv on pv.id = c.IDPROVINCE
+--          LEFT JOIN MAGASINPOINT m ON m.ID = v.IDMAGASIN
+--          JOIN VENTEMONTANTLEGER v2 ON v2.ID = v.ID
+--          LEFT JOIN LIAISONPAIEMENTTOTAL mv ON v.id = mv.id2
+--          LEFT JOIN AVOIRFCMONTANT ACG on ACG.IDVENTE = v.ID
+--          LEFT JOIN REFERENCEFACTURE rf ON rf.idfacture = v.Id
+--          --left join( select sum(vd.POIDS) as poids,sum(vd.QTE) as colis,v.ID  from VENTE_DETAILS vd left join vente v on v.ID=vd.IDVENTE where v.ETAT>=11 group by v.ID ) vp on vp.ID=v.id
+--          --left join vente_poids vp on vp.idvente = v.id
+--          left join MODEPAIEMENT mp on mp.id = v.modepaiement
+--          left join vente_reste vr on vr.idvente = v.id
+--          LEFT JOIN AS_BONDELIVRAISON_CLIENT blc ON blc.IDVENTE = v.id
+--          LEFT JOIN compta_ecriture ce ON ce.idobjet=v.id
+-- ;
+
+
+-- create or replace view VENTE_DETAILS_POIDS_ING as
+-- SELECT
+--     p.ID,
+--     p.IDVENTE,
+--     p.IDPRODUIT,
+--     p.IDORIGINE,
+--     CAST(p.QTE AS NUMBER(38, 2))                                              AS QTE,
+--     p.PU,
+--     p.REMISE,
+--     p.TVA,
+--     p.PUACHAT,
+--     p.PUVENTE,
+--     p.IDDEVISE,
+--     p.TAUXDECHANGE,
+--     p.DESIGNATION,
+--     p.COMPTE,
+--     p.PUREVIENT,
+--     p.IDBCFILLE,
+--     p.UNITE,
+--     u.VAL                                                                     AS UNITELIB,
+
+--     CAST(p.pu - (p.pu * p.remise / 100) + (p.pu * p.tva / 100)
+--          AS NUMBER(30, 5))                                                    AS PUNET,
+
+--     CAST(((p.pu - (p.pu * p.remise / 100)) * p.qte
+--           - NVL(v.fraislivraison, 0) * NVL(ing.CALORIE, 0) * NVL(p.QTE, 0))
+--          AS NUMBER(30, 5))                                                    AS MONTANTHT,
+
+--     CAST(
+--         ((p.pu - (p.pu * p.remise / 100)) * p.qte
+--          - NVL(v.fraislivraison, 0) * NVL(ing.CALORIE, 0) * NVL(p.QTE, 0))
+--         + ((((p.pu * p.qte) - (p.pu * p.remise / 100) * p.qte)
+--             - NVL(v.fraislivraison, 0) * NVL(ing.CALORIE, 0) * NVL(p.QTE, 0)) * p.tva / 100)
+--         AS NUMBER(30, 2)
+--     )                                                                         AS MONTANTTTC,
+
+--     CAST(
+--         ((((p.pu * p.qte) - (p.pu * p.remise / 100) * p.qte)
+--           - NVL(v.fraislivraison, 0) * NVL(ing.CALORIE, 0) * NVL(p.QTE, 0)) * p.tva / 100)
+--         AS NUMBER(30, 2)
+--     )                                                                         AS MONTANTTVA,
+
+--     CAST((p.pu * p.remise / 100) * p.qte AS NUMBER(30, 5))                    AS MONTANTREMISE,
+
+--     CAST(p.pu * p.qte AS NUMBER(30, 5))                                       AS MONTANT,
+
+--     CAST(NVL(ing.CALORIE, 0) * NVL(p.QTE, 0) AS NUMBER(30, 5))                AS POIDS,
+--     (NVL(p.QTE, 0) - NVL(bl.QUANTITE, 0)) - NVL(avcf.qte, 0)                  AS RESTE,
+
+--     CAST(NVL(v.fraislivraison, 0) * NVL(ing.CALORIE, 0) * NVL(p.QTE, 0)
+--          AS NUMBER(30, 5))                                                    AS FRAIS,
+
+--     ing.LIBELLEVENTE                                                          AS IDPRODUITLIB,
+--     v.DATY,
+--     v.DATYPREVU                                                               AS DATYPREVU,
+--     p.IDDEVISE                                                                AS IDDEVISELIB,
+--     c.VAL                                                                     AS IDCATEGORIELIB,
+--     c.VAL                                                                     AS CATEGORIEPRODUITLIB,
+--     CAST(
+--         ((p.pu - (p.pu * p.remise / 100)) * p.qte
+--          - NVL(v.fraislivraison, 0) * NVL(ing.CALORIE, 0) * NVL(p.QTE, 0))
+--         + ((((p.pu * p.qte) - (p.pu * p.remise / 100) * p.qte)
+--             - NVL(v.fraislivraison, 0) * NVL(ing.CALORIE, 0) * NVL(p.QTE, 0)) * p.tva / 100)
+--         AS NUMBER(30, 2)
+--     )                                                                         AS PUTOTAL,
+
+--     cl.nom                                                                    AS IDCLIENTLIB,
+--     p.ristourne                                                               AS RISTOURNE,
+--     p.idprevision,
+--     v.IDRESERVATION,
+--     NVL(v.fraislivraison, 0)                                                  AS FRAISLIVRAISON,
+--     ing.calorie,
+--     CAST(p.pu / NVL(eq.QUANTITE, 1) AS NUMBER(30, 2))                        AS PUINGREDIENT,
+--     NVL(eq.QUANTITE, 1)                                                       AS CONTENUE,
+--     ing.unite2,
+--     (p.pu * p.qte) - ((p.pu * p.remise / 100) * p.qte)                        AS MONTANTREMISER
+
+-- FROM VENTE_DETAILS p
+--     LEFT JOIN VENTE v
+--         ON v.id = p.IDVENTE
+--     LEFT JOIN AS_UNITE u
+--         ON u.id = p.unite
+--     LEFT JOIN AS_INGREDIENTS ing
+--         ON ing.ID = p.IDPRODUIT
+--     LEFT JOIN CLIENT cl
+--         ON v.IDCLIENT = cl.ID
+--     LEFT JOIN CATEGORIEINGREDIENT c
+--         ON ing.CATEGORIEINGREDIENT = c.ID
+--     LEFT JOIN EQUIVALENCEVENTE eq
+--         ON eq.IDPRODUIT1 = p.IDPRODUIT
+--     LEFT JOIN BL_CLIENT_FILLE_grp_vente bl
+--         ON bl.idventedetail = p.ID
+--     LEFT JOIN avoirfcfille_grp_viseee avcf
+--         ON avcf.idventedetails = p.ID;
+
+
+
+-- create or replace view V_ETATSTOCK_ING as
+-- SELECT
+--     null as invdaty,
+--     cast(sum(invquantite) as number(30,2)) as invquantite,
+--     '' as id,
+--     IDPRODUIT,
+--     idproduitlib,
+--     CATEGORIEINGREDIENT,
+--     idtypeproduitlib,
+--     IDMAGASIN, typeStock,
+--     idmagasinlib,
+--     sum(ve.QUANTITE) as quantite,
+--     CAST(sum(ve.ENTREE) AS NUMBER(30,2)) AS ENTREE,
+--     CAST(sum(ve.SORTIE) AS NUMBER(30,2)) AS SORTIE,
+--     CAST(sum(ve.RESTE) AS NUMBER(30,2)) AS RESTE,
+--     cast(sum(ve.reste)* avg(ve.pu) as number(30,2)) as montantReste,
+--     UNITE,
+--     idunitelib,
+--     avg(ve.PU) AS pu,
+--     max(ve.DATY) AS daty,
+--     '' as IDFOURNISSEUR,
+--     '' as IDFOURNISSEURLIB
+-- FROM V_ETATSTOCK_ENTREE_STANDARD ve
+-- WHERE ve.PU > 0
+-- and ve.reste !=0 group by IDPRODUIT, idproduitlib, CATEGORIEINGREDIENT, idtypeproduitlib, ve.IDMAGASIN, typeStock, idmagasinlib, UNITE,idunitelib;       
+
+
+
+-- create or replace view V_ETATSTOCK_ING as
+-- WITH max_inventaire AS (
+--     -- Étape 1 : On extrait la date maximale valide et la quantité par COUPLE produit/magasin
+--     SELECT
+--         invff.idproduit,
+--         imeref.idmagasin,
+--         MAX(imeref.DATY) AS max_daty,
+--         MAX(invff.QUANTITE) KEEP (DENSE_RANK LAST ORDER BY imeref.DATY) AS qte_max_daty
+--     FROM INVENTAIREFILLE invff
+--     LEFT JOIN INVENTAIRE imeref ON imeref.ID = invff.IDINVENTAIRE
+--     WHERE imeref.ETAT >= 11
+--     GROUP BY invff.idproduit, imeref.idmagasin
+-- ),
+-- somme_precalc AS (
+--     -- Étape 3 : Calcul des sommes globales agrégées par COUPLE produit/magasin
+--     SELECT
+--         mff.idproduit as idproduit,
+--         meref.idmagasin as idmagasin,
+--         NVL(SUM(CASE WHEN meref.DATY >NVL(inv.max_daty, TO_DATE('01/01/2025','DD-MM-YYYY')) THEN mff.ENTREE ELSE 0 END), 0) AS entree,
+
+--         NVL(SUM(CASE WHEN meref.DATY > NVL(inv.max_daty, TO_DATE('01/01/2025','DD-MM-YYYY')) THEN mff.SORTIE ELSE 0 END), 0) AS sortie,
+--         ai.LIBELLE AS idproduitlib,
+--         ai.CATEGORIEINGREDIENT as CATEGORIEINGREDIENT,
+--         ai.UNITE as unite,
+--         ai.TYPESTOCK as typestock,
+--         u.VAL AS idunitelib,
+--         c.VAL AS idtypeproduitlib,
+--         avg(mff.PU) as pu,
+--         null as IDFOURNISSEUR,
+--         null as IDFOURNISSEURLIB,
+--         m.VAL AS idmagasinlib,
+--         max(inv.max_daty) AS invdaty,
+--         nvl(max(inv.qte_max_daty),0)as invquantite
+--     FROM MVTSTOCKFILLE mff
+--     LEFT JOIN MVTSTOCK meref ON meref.ID = mff.IDMVTSTOCK
+--     LEFT JOIN max_inventaire inv ON inv.idproduit = mff.idproduit AND inv.idmagasin = meref.idmagasin
+--     LEFT JOIN AS_INGREDIENTS ai ON ai.id = mff.IDPRODUIT
+--     LEFT JOIN CATEGORIEINGREDIENT c ON ai.CATEGORIEINGREDIENT = c.id
+--     LEFT JOIN MAGASINPOINT m ON meref.IDMAGASIN = m.id
+--     LEFT JOIN AS_UNITE u ON ai.UNITE = u.id
+--     WHERE --meref.DATY > NVL(inv.max_daty, TO_DATE('01/01/2025','DD-MM-YYYY')) and
+--       meref.ETAT >= 11
+--       AND meref.IDTYPEMVSTOCK != 'TPMVST000023'
+--     GROUP BY mff.idproduit, meref.idmagasin,ai.LIBELLE,ai.CATEGORIEINGREDIENT,ai.UNITE,ai.TYPESTOCK,u.VAL,c.VAL,m.VAL
+-- )
+-- -- Sélection finale
+-- SELECT
+--     null as ID, null as DATY,  cast(invquantite as number(30,2)) as invquantite,cast(entree as number(30,2)) as entree, cast(sortie as number(30,2)) as sortie,CAST((invquantite)+(ENTREE)-(sortie) AS NUMBER(30,2)) as reste,
+--     CAST(invquantite+ENTREE-sortie AS NUMBER(30,2)) AS quantite,
+--     CAST((invquantite+ENTREE-sortie)*pu AS NUMBER(30,2))AS montantreste,
+--     idproduitlib, CATEGORIEINGREDIENT, UNITE, TYPESTOCK, idunitelib, idtypeproduitlib,
+--     pu, IDFOURNISSEUR, IDFOURNISSEURLIB, IDPRODUIT, IDMAGASIN, idmagasinlib,invdaty
+-- FROM somme_precalc
+-- WHERE invquantite+ENTREE-sortie != 0;

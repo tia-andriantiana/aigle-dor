@@ -1,0 +1,125 @@
+
+ALTER TABLE PAIE_INFO_PERSONNEL
+ADD salaireBase number(30, 2) ;
+
+ALTER TABLE PAIE_INFO_PERSONNEL
+ADD tauxHoraire number(30, 2) ;
+
+CREATE OR REPLACE  VIEW EMPLOYE_COMPLET (ID, NOM, PRENOM, ID_PERS, INITIALE, MATRICULE,
+DATE_NAISSANCE, LIEU_NAISSANCE_COMMUNE, SEXE, NUMERO_CIN, DATE_CIN, DATE_DUPL_CIN, LIEU_DELIVRANCE_CIN,
+ADRESSE, DIRECTION, FOKOTANY, NATIONALITE, ACTE_NAISSANCE, SITUATION_MATRIMONIAL, IDCONJOINT, SERVICE,
+IDFONCTION, CTG, IDCATEGORIE, CLASSEE, INDICEGRADE, INDICE_FONCTIONNEL, MATRICULE_PATRON, STATUT, MODE_PAIEMENT,
+CODE_AGENCE_BANQUE, BANQUE_NUMERO_COMPTE, BANQUE_COMPTE_CLE, PERMIS_CONDUIRE, REMARQUE, CHEMIN_PERMIS,
+CTURGENCE_NOM_PRENOM, CTURGENCE_TELEPHONE1, CTURGENCE_TELEPHONE2, CTURGENCE_TELEPHONE3, DATEEMBAUCHE,
+DATESAISIE, CODE_DR, BANQUE_CODE, ECHELON, ETAT, VEHICULEE, DATE_DERNIERPROMO, DROIT_HS, HEUREJOURNALIER,
+HEUREHEBDOMADAIRE, HEUREMENSUEL, NUMERO_CNAPS, NUMERO_OSTIE, TEMPORAIRE, NBENFANT, INDESIRABLE, DUREE,
+TELEPHONE, MAIL, IDCATEGORIE_PAIE, IDQUALIFICATION, DISCIPLINE, FORMATION, ANNEEEXPERIENCE, PERSONNEL_ETAT,
+DEBUTCONTRAT, FINCONTRAT, REFUSER, IDETATHIERARCHIE, ETATVISA, ETATANNULE, TYPECONTRAT, CHEMINIMAGE, CODE_POSTAL,
+IDDEPARTEMENT, MERE, PERE, IDCIVILITELIB, IDCIVILITE, IDBANQUE, IDBANQUELIB, IDAGENCE, CODEAGENCE, IDAGENCELIB, IDSTATUT,
+salaireBase,tauxHoraire,
+IDSTATUTLIB) AS 
+  SELECT logp.id,
+       logp.nom,
+       logp.prenom,
+       logp.id_pers,
+       paie.initiale,
+       paie.matricule,
+       logp.date_naissance,
+       paie.lieu_naissance_commune,
+       logp.sexe,
+       logp.numero_cin,
+       logp.date_cin,
+       logp.date_dupl_cin,
+       paie.lieu_delivrance_cin,
+       logp.adresse,
+       logp.direction,
+       logp.fokotany,
+       logp.nationalite,
+       logp.acte_naissance,
+       paie.situation_matrimonial,
+       paie.idconjoint,
+       logp.service,
+       paie.idfonction,
+       paie.ctg,
+       paie.idcategorie,
+       paie.classee,
+       paie.indicegrade,
+       paie.indice_fonctionnel,
+       paie.matricule_patron,
+       paie.statut,
+       paie.mode_paiement,
+       paie.code_agence_banque,
+       paie.banque_numero_compte,
+       paie.banque_compte_cle,
+       logp.permis_conduire,
+       logp.remarque,
+       logp.chemin_permis,
+       paie.cturgence_nom_prenom,
+       paie.cturgence_telephone1,
+       paie.cturgence_telephone2,
+       paie.cturgence_telephone3,
+       paie.dateembauche,
+       paie.datesaisie,
+       serv.code_dr,
+       trs.val AS banque_code,
+       paie.echelon,
+       paie.etat,
+       paie.vehiculee,
+       tab.date_dernierpromo,
+       paie.droit_hs,
+       paie.heurejournalier,
+       paie.heurehebdomadaire,
+       paie.heuremensuel,
+       paie.numero_cnaps,
+       paie.numero_ostie,
+       paie.temporaire,
+       paie.nbenfant,
+       paie.indesirable,
+       paie.duree,
+       paie.telephone,
+       paie.mail,
+       paie.idcategorie_paie,
+       paie.idqualification,
+       paie.discipline,
+       paie.formation,
+       paie.anneeexperience,
+       paie.personnel_etat,
+       paie.debutcontrat,
+       paie.fincontrat,
+       logp.refuser,
+       logp.idhierarchie AS idetathierarchie,
+       et.etatvisa,
+       et.etatannule,
+       paie.typecontrat,
+       logp.cheminImage,
+       paie.code_postal,
+       paie.IDDEPARTEMENT,
+       logp.mere,
+       logp.pere,
+       civ.val as idcivilitelib,
+       logp.IDCIVILITE,
+       paie.idbanque,
+       bnq.val as idbanquelib,
+       paie.idagence,
+       bnqa.codeagence,
+       bnqa.nom as idagencelib,
+       paie.idstatut,
+       paie.salaireBase,
+       paie.tauxHoraire,
+       stat.val as idStatutLib
+FROM log_personnel logp
+         LEFT JOIN ( SELECT paie_avancement.id_logpers,
+                            max(paie_avancement.datedecision) AS date_dernierpromo
+                     FROM paie_avancement
+                     GROUP BY paie_avancement.id_logpers) tab ON logp.id = tab.id_logpers
+         LEFT JOIN paie_info_personnel paie ON logp.id = paie.id
+         LEFT JOIN log_service serv ON serv.id = logp.service
+         LEFT JOIN trs_banques_agences trs ON paie.code_agence_banque = trs.id
+         LEFT JOIN categorie_paie cp ON cp.id = paie.idcategorie_paie
+         LEFT JOIN qualification_paie qp ON qp.id = paie.idqualification
+         LEFT JOIN categorie_qualification cq ON cq.idcategorie = paie.idcategorie_paie AND cq.idqualification = paie.idqualification AND cq.REMARQUE = logp.id
+         LEFT JOIN etathierarchie et ON et.id = logp.idhierarchie
+         LEFT JOIN civilite civ ON logp.idcivilite = civ.id
+         LEFT JOIN banque bnq ON bnq.id = paie.idbanque
+         LEFT JOIN BANQUE_AGENCE bnqa ON bnqa.id = paie.idagence
+         LEFT JOIN PAIE_STATUT stat ON stat.id = paie.idStatut;

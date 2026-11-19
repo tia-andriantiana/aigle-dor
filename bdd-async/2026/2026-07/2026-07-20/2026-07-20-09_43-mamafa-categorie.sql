@@ -1,0 +1,3 @@
+-- backper-na aloha vo fafana
+DELETE FROM CATEGORIEINGREDIENT x
+	WHERE x.ID='CATING000021';

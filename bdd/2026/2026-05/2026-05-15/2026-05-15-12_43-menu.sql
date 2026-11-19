@@ -1,0 +1,4 @@
+INSERT INTO menudynamique (id, libelle, icone, href, rang, niveau, id_pere) VALUES ('MENDYN1778838030848521', 'Statistique', 'query_stats', '', 21, 2, 'MNDN000000001');
+INSERT INTO menudynamique (id, libelle, icone, href, rang, niveau, id_pere) VALUES ('MENDYN1778838045799467', 'Par Province', 'check', 'module.jsp?but=vente/vente-details-region.jsp', 22, 2, 'MNDN000000001');
+INSERT INTO menudynamique (id, libelle, icone, href, rang, niveau, id_pere) VALUES ('MENDYN1778838075955459', 'Par Client', 'check', 'module.jsp?but=vente/vente-details-liste.jsp', 1, 3, 'MENDYN1778838030848521');
+INSERT INTO menudynamique (id, libelle, icone, href, rang, niveau, id_pere) VALUES ('MENDYN177883819268969', 'Livraison commerciale', 'edit', 'module.jsp?but=vente/ventelistenonlivrer.jsp', 22, 2, 'MNDN000000001');

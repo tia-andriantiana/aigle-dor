@@ -1,0 +1,7 @@
+create or replace view DEPENSEDIVERSFILLELIB as
+SELECT
+    d."ID",d."IDMERE",d."IDPRODUIT",d."DESIGNATION",d."QUANTITE",d."PU",
+    ail.LIBELLE AS idProduitLib,
+    NVL(d."QUANTITE", 0) * NVL(d."PU", 0) AS montant
+FROM DEPENSEDIVERSFILLE d
+         LEFT JOIN AS_INGREDIENTS_LIB ail ON d.IDPRODUIT = ail.ID;

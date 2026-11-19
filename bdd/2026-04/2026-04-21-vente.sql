@@ -1,0 +1,55 @@
+-- SOCOBISCOMPLET0420.BONDECOMMANDE_CLIENT_FILLE_V source
+
+-- SOCOBISCOMPLET0420.BONDECOMMANDE_CLIENT_FILLE_V source
+
+CREATE OR REPLACE  VIEW BONDECOMMANDE_CLIENT_FILLE_V (ID, PRODUIT, IDBC, QUANTITE, PU, MONTANT, TVA, REMISE, IDDEVISE, UNITE, DESIGNATION, UNITELIB, PUNET, MONTANTHT, MONTANTTTC, RISTOURNE) AS 
+  select p.ID,
+       p.PRODUIT,
+       p.IDBC,
+       p.QUANTITE,
+       p.PU,
+       p.MONTANT,
+       p.TVA,
+       p.REMISE,
+       p.IDDEVISE,
+       p.UNITE,
+       p.DESIGNATION,
+       uni.val as unitelib,
+       0  as punet,
+       0  as montantht,
+       0  as montantttc,
+       p.RISTOURNE
+from BONDECOMMANDE_CLIENT_FILLE p
+	LEFT JOIN as_unite uni ON p.unite = uni.id
+ ;
+
+-- SOCOBISCOMPLET0420.AS_BONDELIVRAISON_LIBCPL source
+-- SOCOBISCOMPLET0420.PROFORMA_DETAILS_VIDE source
+
+CREATE OR REPLACE  VIEW PROFORMA_DETAILS_VIDE (ID, IDPROFORMA, IDPRODUIT, IDORIGINE, QTE, PU, REMISE, TVA, PUACHAT, PUVENTE, IDDEVISE, TAUXDECHANGE, DESIGNATION, COMPTE, PUREVIENT, IDDEMANDEPRIXFILLE, UNITE, DATEDEBUT, UNITELIB, PUNET, MONTANTHT, MONTANTTTC, RISTOURNE) AS 
+  select p.ID,
+       p.IDPROFORMA,
+       p.IDPRODUIT,
+       p.IDORIGINE,
+       p.QTE,
+       p.PU,
+       p.REMISE,
+       p.TVA,
+       p.PUACHAT,
+       p.PUVENTE,
+       p.IDDEVISE,
+       p.TAUXDECHANGE,
+       p.DESIGNATION,
+       p.COMPTE,
+       p.PUREVIENT,
+       p.IDDEMANDEPRIXFILLE,
+       p.UNITE,
+       p.DATEDEBUT,
+       u.val as unitelib,
+       0  as punet,
+       0  as montantht,
+       0  as montantttc,
+       p.RISTOURNE
+from PROFORMA_DETAILS p
+	LEFT JOIN as_unite u ON p.unite=u.id
+ ;

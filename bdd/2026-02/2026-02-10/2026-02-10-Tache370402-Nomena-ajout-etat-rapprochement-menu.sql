@@ -1,0 +1,1 @@
+INSERT INTO menudynamique (id, libelle, icone, href, rang, niveau, id_pere) VALUES ('MENDYN1770706593858630', 'État de rapprochement', 'balance', 'module.jsp?but=rapprochement/etat-rapprochement.jsp', 10, 2, 'MNDN274');

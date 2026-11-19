@@ -1,0 +1,1 @@
+INSERT INTO menudynamique (id, libelle, icone, href, rang, niveau, id_pere) VALUES ('MENDYN1785366484625224', 'Synchronisation', 'cloud_sync', 'module.jsp?but=synchronisation/synchronisation.jsp', 12, 2, 'MNDN00000002111');

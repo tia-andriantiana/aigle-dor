@@ -1,0 +1,16 @@
+CREATE OR REPLACE VIEW PieceMachineLib AS
+SELECT
+    pm.*,
+    p.LIBELLE AS IDPIECELIB,
+    m.LIBELLE AS IDMACHINELIB
+FROM PIECEMACHINE pm
+         JOIN AS_INGREDIENT_MAINTENANCE p
+              ON p.ID = pm.IDPIECE
+         JOIN AS_INGREDIENT_MAINTENANCE m
+              ON m.ID = pm.IDMACHINE;
+
+CREATE OR REPLACE VIEW As_Ingredient_piece AS
+SELECT * FROM As_ingredient_maintenance_lib WHERE IDENTITE = 'ENT000004';
+
+CREATE OR REPLACE VIEW As_Ingredient_machine AS
+SELECT * FROM As_ingredient_maintenance_lib WHERE IDENTITE = 'ENT000001';

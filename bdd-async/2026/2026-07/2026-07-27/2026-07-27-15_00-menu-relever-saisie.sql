@@ -1,0 +1,1 @@
+INSERT INTO menudynamique (id, libelle, icone, href, rang, niveau, id_pere) VALUES ('MENDYN1785147267895936', 'Saisie Relevé', 'add', 'module.jsp?but=rapprochement/saisie-relever.jsp', 4, 3, 'MENDYN1766386514657608');

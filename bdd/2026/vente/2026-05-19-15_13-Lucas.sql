@@ -1,0 +1,4 @@
+-- SOCOBISRECTIFDONNEE.STATFILLE source
+
+CREATE OR REPLACE  VIEW STATFILLE (ID, LIBELLE, QTE, MONTANT, DATY, IDCLIENT, IDPROVINCE, FAMILLE,IDFAMILLE) AS 
+  select IDPRODUIT as id, LIBELLE, sum(qte) as qte, sum(montant) as montant, DATY, IDCLIENT, IDPROVINCE, famille,idfamille from balance_client group by IDPRODUIT, LIBELLE, daty, IDCLIENT, IDPROVINCE, famille,idfamille;

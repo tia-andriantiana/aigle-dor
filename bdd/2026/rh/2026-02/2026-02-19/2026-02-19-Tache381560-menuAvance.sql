@@ -1,0 +1,1 @@
+INSERT INTO menudynamique (id, libelle, icone, href, rang, niveau, id_pere) VALUES ('MENDYN1771395863085540', 'Saisie d''avance multiple', 'add', 'module.jsp?but=paie/avance/avancesaisie-multiple.jsp', 5, 4, 'AMS006');

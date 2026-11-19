@@ -1,0 +1,225 @@
+efa executer preprod sy prod 
+-- DELETE FROM CAISSE x
+-- 	WHERE x.ID=' CAISC022';
+
+
+-- DELETE FROM CAISSE x
+-- 	WHERE x.ID=' CAISC024';
+-- DELETE FROM CAISSE x
+-- 	WHERE x.ID=' CAISC025';
+ 
+-- UPDATE  CAISSE x
+-- 	SET x.ID='CAISC023'
+-- 	WHERE x.ID=' CAISC023';
+
+ 
+-- UPDATE  CAISSE x
+-- 	SET x.ID='CAISC026'
+-- 	WHERE x.ID=' CAISC026';
+
+ 
+-- INSERT INTO REPORTCAISSE (ID,IDCAISSE,MONTANT,MONTANTTHEORIQUE,DATY,ETAT)
+-- 	VALUES ('RPRCAISSE0001','CAISC023',41225722.91,0,TIMESTAMP '2026-06-15 00:00:00.000000',1);
+
+ 
+
+
+
+-- DELETE FROM MVTCAISSEPREVISION 
+-- WHERE id1 IN (
+--     SELECT id FROM MOUVEMENTCAISSE 
+--     WHERE idcaisse IN ('CAI000233',
+-- 'CAI000234',
+-- 'CAI000229',
+-- 'CAI000236',
+-- 'CAI000230',
+-- 'CAI000232',
+-- 'CAI000235',
+-- 'CAI000237',
+-- 'CAI000238',
+-- 'CAIS000017',
+-- 'CAIS00000T00016',
+-- 'CAIS001',
+-- 'CAISB001',
+-- 'CAISB002',
+-- 'CAISB003',
+-- 'CAISB004',
+-- 'CAISB005',
+-- 'CAISB006',
+-- 'CAISB007',
+-- 'CAISB008',
+-- 'CAISB009',
+-- 'CAISB010',
+-- 'CAISB011',
+-- 'CAISB012',
+-- 'CAISB013',
+-- 'CAISB014',
+-- 'CAISB015',
+-- 'CAISB016',
+-- 'CAISB017',
+-- 'CAISB018',
+-- 'CAISB019',
+-- 'CAISB020',
+-- 'CAISB021',
+-- 'CAISB022',
+-- 'CAISC023',
+-- 'CAISC026')
+-- )
+-- OR id2 IN (
+--     SELECT id FROM MOUVEMENTCAISSE 
+--     WHERE idcaisse IN ('CAI000233',
+--         'CAI000234',
+--         'CAI000229',
+--         'CAI000236',
+--         'CAI000230',
+--         'CAI000232',
+--         'CAI000235',
+--         'CAI000237',
+--         'CAI000238',
+--         'CAIS000017',
+--         'CAIS00000T00016',
+--         'CAIS001',
+--         'CAISB001',
+--         'CAISB002',
+--         'CAISB003',
+--         'CAISB004',
+--         'CAISB005',
+--         'CAISB006',
+--         'CAISB007',
+--         'CAISB008',
+--         'CAISB009',
+--         'CAISB010',
+--         'CAISB011',
+--         'CAISB012',
+--         'CAISB013',
+--         'CAISB014',
+--         'CAISB015',
+--         'CAISB016',
+--         'CAISB017',
+--         'CAISB018',
+--         'CAISB019',
+--         'CAISB020',
+--         'CAISB021',
+--         'CAISB022',
+--         'CAISC023',
+--         'CAISC026')
+-- );
+
+
+-- DELETE FROM MOUVEMENTCAISSE WHERE idcaisse IN 
+-- ('CAI000233',
+-- 'CAI000234',
+-- 'CAI000229',
+-- 'CAI000236',
+-- 'CAI000230',
+-- 'CAI000232',
+-- 'CAI000235',
+-- 'CAI000237',
+-- 'CAI000238',
+-- 'CAIS000017',
+-- 'CAIS00000T00016',
+-- 'CAIS001',
+-- 'CAISB001',
+-- 'CAISB002',
+-- 'CAISB003',
+-- 'CAISB004',
+-- 'CAISB005',
+-- 'CAISB006',
+-- 'CAISB007',
+-- 'CAISB008',
+-- 'CAISB009',
+-- 'CAISB010',
+-- 'CAISB011',
+-- 'CAISB012',
+-- 'CAISB013',
+-- 'CAISB014',
+-- 'CAISB015',
+-- 'CAISB016',
+-- 'CAISB017',
+-- 'CAISB018',
+-- 'CAISB019',
+-- 'CAISB020',
+-- 'CAISB021',
+-- 'CAISB022',
+-- 'CAISC023',
+-- 'CAISC026');
+
+
+
+ 
+-- DELETE FROM PREVISION WHERE idcaisse IN 
+-- ('CAI000233',
+-- 'CAI000234',
+-- 'CAI000229',
+-- 'CAI000236',
+-- 'CAI000230',
+-- 'CAI000232',
+-- 'CAI000235',
+-- 'CAI000237',
+-- 'CAI000238',
+-- 'CAIS000017',
+-- 'CAIS00000T00016',
+-- 'CAIS001',
+-- 'CAISB001',
+-- 'CAISB002',
+-- 'CAISB003',
+-- 'CAISB004',
+-- 'CAISB005',
+-- 'CAISB006',
+-- 'CAISB007',
+-- 'CAISB008',
+-- 'CAISB009',
+-- 'CAISB010',
+-- 'CAISB011',
+-- 'CAISB012',
+-- 'CAISB013',
+-- 'CAISB014',
+-- 'CAISB015',
+-- 'CAISB016',
+-- 'CAISB017',
+-- 'CAISB018',
+-- 'CAISB019',
+-- 'CAISB020',
+-- 'CAISB021',
+-- 'CAISB022',
+-- 'CAISC023',
+-- 'CAISC026');
+
+
+-- DELETE FROM ENCAISSEMENT WHERE idcaisse IN ('CAI000233',
+-- 'CAI000234',
+-- 'CAI000229',
+-- 'CAI000236',
+-- 'CAI000230',
+-- 'CAI000232',
+-- 'CAI000235',
+-- 'CAI000237',
+-- 'CAI000238',
+-- 'CAIS000017',
+-- 'CAIS00000T00016',
+-- 'CAIS001',
+-- 'CAISB001',
+-- 'CAISB002',
+-- 'CAISB003',
+-- 'CAISB004',
+-- 'CAISB005',
+-- 'CAISB006',
+-- 'CAISB007',
+-- 'CAISB008',
+-- 'CAISB009',
+-- 'CAISB010',
+-- 'CAISB011',
+-- 'CAISB012',
+-- 'CAISB013',
+-- 'CAISB014',
+-- 'CAISB015',
+-- 'CAISB016',
+-- 'CAISB017',
+-- 'CAISB018',
+-- 'CAISB019',
+-- 'CAISB020',
+-- 'CAISB021',
+-- 'CAISB022',
+-- 'CAISC023',
+-- 'CAISC026');
+
